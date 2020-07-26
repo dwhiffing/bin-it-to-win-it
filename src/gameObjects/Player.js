@@ -4,9 +4,6 @@ import { ZOOM_LEVELS, ZOOM_SPEED } from '../constants'
 export default class Player {
   constructor(scene, group) {
     this.scene = scene
-    this.setActive = this.setActive.bind(this)
-    this.release = this.release.bind(this)
-    this.sprite.release = this.release.bind(this)
 
     this.sprite = scene.matter.add
       .image(this.scene.wWidth / 2, 1200, 'ball', null, {
@@ -23,6 +20,9 @@ export default class Player {
       .on('pointerdown', () => {
         this.setLineActive(true)
       })
+    this.setActive = this.setActive.bind(this)
+    this.release = this.release.bind(this)
+    this.sprite.release = this.release.bind(this)
 
     this.scene.behavior.enable(this.sprite)
     this.sprite.behaviors.set('smoke', SMOKE, {})
