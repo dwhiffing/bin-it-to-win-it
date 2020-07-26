@@ -1,3 +1,83 @@
+export default class Platforms {
+  constructor(scene) {
+    this.scene = scene
+    this.width = this.scene.cameras.main.width
+    this.height = this.scene.cameras.main.height
+    this.sprites = []
+    this.update = this.update.bind(this)
+    this.lifeGroup = this.scene.add.group({ classType: Life, maxSize: 10 })
+    this.coinGroup = this.scene.add.group({ classType: Coin, maxSize: 500 })
+
+    let yPos = this.height - 100
+    this.createPlatform(0, yPos).setScale(200, 3)
+    let index = 0
+    while (yPos > -this.scene.wHeight) {
+      const { wWidth } = this.scene
+      yPos -= 5000
+      // let xPos = Phaser.Math.RND.pick([0, 1, 2])
+      let xPos = [1, 0, 1, 2][index++ % 4]
+      const platform = this.createPlatform(xPos, yPos)
+      const platformPositions = [
+        platform.width * 1.6,
+        wWidth / 2,
+        wWidth - platform.width * 1.6,
+      ]
+      const x = platformPositions[xPos]
+      platform.x = x
+      platform.setScale(3, 1)
+      this.sprites.push(platform)
+
+      if (index % 5 === 0) {
+        this.createLife(wWidth / 2, yPos - 120)
+        platform.x = platformPositions[1]
+        platform.setScale(10, 1)
+      } else {
+        for (let i = 0; i < 5; i++) {
+          this.createCoin(-400 + x + i * 200, yPos - 120)
+        }
+      }
+    }
+  }
+
+  update() {
+    this.sprites.forEach((p) =>
+      p.setCollisionGroup(
+        this.scene.player.sprite.body.velocity.y > 0 &&
+          !this.scene.player.sprite.drawLine
+          ? this.scene.clipGroup
+          : this.scene.noClipGroup,
+      ),
+    )
+  }
+
+  createPlatform(x, y) {
+    let platform = this.scene.matter.add
+      .image(x, y, 'platform', null, { isStatic: true })
+      .setDepth(1)
+      .setTint(0xff9955)
+      .setCollisionGroup(this.scene.clipGroup)
+      .setPipeline('Light2D')
+    platform.body.label = 'platform'
+    return platform
+  }
+
+  createLife(x, y) {
+    const life = this.lifeGroup.get(x, y)
+    if (life) {
+      life.setActive(true)
+      life.setVisible(true)
+    }
+  }
+
+  createCoin(x, y) {
+    const coin = this.coinGroup.get(x, y)
+    if (coin) {
+      coin.setActive(true)
+      coin.setVisible(true)
+    }
+  }
+}
+
 class Life extends Phaser.Physics.Matter.Sprite {
   constructor(scene, x, y) {
     super(scene.matter.world, x, y, 'flares', 'green')
@@ -17,79 +97,5 @@ class Coin extends Phaser.Physics.Matter.Sprite {
     this.setStatic(true)
     this.body.label = 'coin'
     this.body.ignorePointer = true
-  }
-}
-
-export default class Platforms {
-  constructor(scene) {
-    this.scene = scene
-    this.width = this.scene.cameras.main.width
-    this.height = this.scene.cameras.main.height
-    this.sprites = []
-    this.update = this.update.bind(this)
-    this.lifeGroup = this.scene.add.group({
-      classType: Life,
-      maxSize: 10,
-    })
-    this.coinGroup = this.scene.add.group({
-      classType: Coin,
-      maxSize: 500,
-    })
-
-    let platformY = this.height - 100
-
-    const life = this.lifeGroup.get(
-      Phaser.Math.RND.between(500, 500),
-      Phaser.Math.RND.between(300, 300),
-    )
-    if (life) {
-      life.setActive(true)
-      life.setVisible(true)
-    }
-
-    let platform = this.scene.matter.add
-      .image(this.wWidth, platformY, 'platform', null, {
-        isStatic: true,
-      })
-      .setTint(0xff9955)
-      .setScale(200, 3)
-      .setDepth(2)
-      .setPipeline('Light2D')
-      .setCollisionGroup(this.scene.clipGroup)
-    platform.body.label = 'platform'
-
-    while (platformY > -this.scene.wHeight) {
-      platformY -= Phaser.Math.RND.between(800, 1500)
-      let xOffset = Phaser.Math.RND.between(0, this.scene.wWidth)
-      let xPos = this.width / 2 + xOffset
-      const platform = this.scene.matter.add
-        .image(xPos, platformY, 'platform', null, {
-          isStatic: true,
-        })
-        .setDepth(1)
-        .setTint(0xff9955)
-        .setCollisionGroup(this.scene.clipGroup)
-        .setPipeline('Light2D')
-      for (let i = 0; i < 10; i++) {
-        const coin = this.coinGroup.get(-440 + xPos + i * 100, platformY - 120)
-        if (coin) {
-          coin.setActive(true)
-          coin.setVisible(true)
-        }
-      }
-      this.sprites.push(platform)
-      platform.body.label = 'platform'
-    }
-  }
-
-  update() {
-    this.sprites.forEach((p) =>
-      p.setCollisionGroup(
-        this.scene.player.sprite.body.velocity.y > 0 &&
-          !this.scene.player.sprite.drawLine
-          ? this.scene.clipGroup
-          : this.scene.noClipGroup,
-      ),
-    )
   }
 }

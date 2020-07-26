@@ -6,7 +6,7 @@ export default class Player {
     this.setActive = this.setActive.bind(this)
     this.release = this.release.bind(this)
     this.sprite = scene.matter.add
-      .image(this.scene.wWidth / 2, 400, 'ball', null, {
+      .image(this.scene.wWidth / 2, 1200, 'ball', null, {
         shape: 'circle',
         mass: 5,
       })
@@ -59,7 +59,7 @@ export default class Player {
       }
     })
 
-    this.spotlight = this.scene.lights.addLight(0, 0, 12000, 0xffffff, 2)
+    this.spotlight = this.scene.lights.addLight(0, 0, 90000, 0xffffff, 2)
 
     this.spring = this.scene.matter.add.mouseSpring({
       stiffness: 0.005,
@@ -71,14 +71,16 @@ export default class Player {
   }
 
   setActive(active) {
-    if (active) {
+    if (active && !this.sprite.canBeClicked) {
+      this.scene.cameras.main.zoomTo(0.5, 300)
       this.sprite.canBeClicked = true
       this.sprite.body.ignorePointer = false
       this.sprite.setTint(0x44aa44)
       if (this.scene.registry.values.lives === 0) {
         this.scene.scene.start('Menu')
       }
-    } else {
+    }
+    if (!active && this.sprite.canBeClicked) {
       this.sprite.canBeClicked = false
       this.sprite.setTint(0xaaaaaa)
       this.sprite.body.ignorePointer = true
@@ -107,6 +109,7 @@ export default class Player {
     const diffY = this.startY - this.sprite.y
     if (this.sprite.body.speed > 20 || diffY > 1500) {
       this.scene.registry.values.lives -= 1
+      this.scene.cameras.main.zoomTo(0.3, 300)
     }
   }
 
@@ -135,7 +138,7 @@ export default class Player {
 
     if (this.sprite.drawLine) {
       this.scene.cameras.main.scrollY = this.cameraY
-      this.scene.cameras.main.scrollX = this.cameraX
+      // this.scene.cameras.main.scrollX = this.cameraX
     }
   }
 }

@@ -3,7 +3,7 @@ let lastX = 0,
   zoom = 0
 export const SMOKE = {
   options: {
-    lifespan: 2000,
+    lifespan: 800,
     angle: { start: 0, end: 360, steps: 32 },
     speed: { min: 150, max: 240 },
     quantity: 8,
@@ -12,12 +12,6 @@ export const SMOKE = {
     alpha: { start: 0.8, end: 0 },
     frame: 'red',
     blendMode: 'ADD',
-    // lifespan: 800,
-    // angle: { start: 360, end: 0, steps: 32 },
-    // speed: 200,
-    // quantity: 1,
-    // scale: { start: 0.8, end: 0 },
-    // frequency: 40,
   },
 
   $create: function (entity, options) {
@@ -48,15 +42,19 @@ export const SMOKE = {
   update: function (entity) {
     if (!entity || !entity.body) return
     const dist = entity.body.speed
-    const scale = Phaser.Math.Clamp(100 / dist, 0.4, 2.5)
-    entity.smoke2.setFrame(entity.canBeClicked ? 'white' : 'red')
+
     entity.smoke.setQuantity(Math.ceil(dist / 10))
     entity.smoke.setSpeed({ min: dist * 4, max: dist * 7 })
     entity.smoke.setScale({
       start: Phaser.Math.Clamp(0.2 + dist / 100, 0.5, 0.9),
       end: 0,
     })
-    entity.smoke2.setScale({ start: scale, end: 0.3 })
+
+    entity.smoke2.setFrame(entity.canBeClicked ? 'white' : 'red')
+    entity.smoke2.setScale({
+      start: Phaser.Math.Clamp(100 / dist, 0.4, 2.5),
+      end: 0.3,
+    })
     entity.smoke2.setLifespan(50 + dist * 2)
     entity.smoke2.setQuantity(Math.ceil(dist / 30))
 

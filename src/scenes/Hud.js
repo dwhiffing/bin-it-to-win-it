@@ -9,9 +9,6 @@ export default class extends Phaser.Scene {
   }
 
   create() {
-    this.registry.values.score = 0
-    this.registry.values.lives = 5
-
     this.scoreText = this.add
       .text(this.width / 2, 100, this.registry.values.score, {
         fontSize: 80,

@@ -1,14 +1,6 @@
 let emitter1, emitter2
 export const POINTER_LINE = {
-  options: {
-    frame: 'red',
-    speed: { min: -800, max: 800 },
-    angle: { min: 0, max: 360 },
-    scale: { start: 0.7, end: 0 },
-    lifespan: 600,
-    gravityY: 800,
-    blendMode: 'ADD',
-  },
+  options: {},
 
   $create: function (entity, options) {
     entity.line = new Phaser.Geom.Line(entity.x, entity.y, entity.x, entity.y)
@@ -26,18 +18,18 @@ export const POINTER_LINE = {
         blendMode: 'SCREEN',
       })
       .setTint(0x00ff00)
-    entity.particleEmitter.createEmitter({
-      frame: ['blue'],
-      x: 0,
-      y: 0,
-      scale: { start: 0.8, end: 0 },
-      alpha: { start: 0.15, end: 0, ease: 'Quartic.easeOut' },
-      speed: { min: -100, max: 100 },
-      quantity: 4,
-      lifespan: 1000,
-      emitZone: { source: entity.line },
-      blendMode: 'ADD',
-    })
+    // entity.particleEmitter.createEmitter({
+    //   frame: ['blue'],
+    //   x: 0,
+    //   y: 0,
+    //   scale: { start: 0.8, end: 0 },
+    //   alpha: { start: 0.15, end: 0, ease: 'Quartic.easeOut' },
+    //   speed: { min: -100, max: 100 },
+    //   quantity: 4,
+    //   lifespan: 1000,
+    //   emitZone: { source: entity.line },
+    //   blendMode: 'ADD',
+    // })
     entity.particleEmitter.setDepth(1)
     entity.particleEmitter.emitters.list.forEach((e) => e.stop())
   },
