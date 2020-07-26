@@ -1,10 +1,13 @@
 import { SMOKE, POINTER_LINE, EXPLODE } from '../behaviors'
+import { ZOOM_LEVELS, ZOOM_SPEED } from '../constants'
 
 export default class Player {
   constructor(scene, group) {
     this.scene = scene
     this.setActive = this.setActive.bind(this)
     this.release = this.release.bind(this)
+    this.sprite.release = this.release.bind(this)
+
     this.sprite = scene.matter.add
       .image(this.scene.wWidth / 2, 1200, 'ball', null, {
         shape: 'circle',
@@ -15,51 +18,23 @@ export default class Player {
       .setBounce(0.4)
       .setInteractive()
       .setCollisionGroup(group)
-    this.sprite.release = this.release.bind(this)
+      .setDepth(2)
+      .setAlpha(0.01)
+      .on('pointerdown', () => {
+        this.setLineActive(true)
+      })
+
     this.scene.behavior.enable(this.sprite)
     this.sprite.behaviors.set('smoke', SMOKE, {})
     this.sprite.behaviors.set('explode', EXPLODE, {})
     this.sprite.behaviors.set('pointerLine', POINTER_LINE, {})
+
+    this.scene.matter.world.on('collisionstart', this.onCollision.bind(this))
     this.cameraY = this.scene.cameras.main.scrollY
-    this.sprite.setDepth(2)
-    this.sprite.alpha = 0.01
-
-    this.sprite.on('pointerdown', () => {
-      this.setLineActive(true)
-    })
-
+    this.spotlight = this.scene.lights.addLight(0, 0, 90000, 0xffffff, 2)
     this.scene.input.on('pointerup', () => {
       this.sprite.drawLine && this.release()
     })
-
-    this.scene.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
-      if (bodyA.label === 'life') {
-        return this.getLife(bodyA)
-      }
-      if (bodyB.label === 'life') {
-        return this.getLife(bodyB)
-      }
-      if (bodyA.label === 'coin') {
-        return this.getCoin(bodyA)
-      }
-      if (bodyB.label === 'coin') {
-        return this.getCoin(bodyB)
-      }
-      if (bodyA.label === 'platform' || bodyB.label === 'platform') {
-        if (this.sprite.body.velocity.y > 10) {
-          if (this.sprite.body.velocity.y > 12) {
-            this.scene.cameras.main.shake(
-              this.sprite.body.velocity.y * 7,
-              this.sprite.body.velocity.y / 800,
-            )
-          }
-          this.sprite.burst(Math.ceil(this.sprite.body.velocity.y) * 4)
-        }
-        this.setActive(true)
-      }
-    })
-
-    this.spotlight = this.scene.lights.addLight(0, 0, 90000, 0xffffff, 2)
 
     this.spring = this.scene.matter.add.mouseSpring({
       stiffness: 0.005,
@@ -70,9 +45,26 @@ export default class Player {
     this.setActive(false)
   }
 
+  update() {
+    if (this.sprite.y < -this.scene.wHeight) {
+      this.scene.scene.start('Game')
+    }
+    this.spotlight.x = this.sprite.x
+    this.spotlight.y = this.sprite.y
+
+    if (this.sprite.body.speed < 2 && !this.sprite.canBeClicked) {
+      this.setActive(true)
+    }
+
+    if (this.sprite.drawLine) {
+      this.scene.cameras.main.scrollY = this.cameraY
+      // this.scene.cameras.main.scrollX = this.cameraX
+    }
+  }
+
   setActive(active) {
     if (active && !this.sprite.canBeClicked) {
-      this.scene.cameras.main.zoomTo(0.5, 300)
+      this.scene.cameras.main.zoomTo(ZOOM_LEVELS[0], 300)
       this.sprite.canBeClicked = true
       this.sprite.body.ignorePointer = false
       this.sprite.setTint(0x44aa44)
@@ -88,7 +80,7 @@ export default class Player {
   }
 
   setLineActive(active) {
-    if (active) {
+    if (active && this.sprite.canBeClicked) {
       this.cameraY = this.scene.cameras.main.scrollY
       this.cameraX = this.scene.cameras.main.scrollX
       this.sprite.particleEmitter.emitters.list.forEach((e) => e.start())
@@ -109,7 +101,7 @@ export default class Player {
     const diffY = this.startY - this.sprite.y
     if (this.sprite.body.speed > 20 || diffY > 1500) {
       this.scene.registry.values.lives -= 1
-      this.scene.cameras.main.zoomTo(0.3, 300)
+      this.scene.cameras.main.zoomTo(ZOOM_LEVELS[1], ZOOM_SPEED)
     }
   }
 
@@ -129,16 +121,36 @@ export default class Player {
     this.scene.registry.values.score += 50
   }
 
-  update() {
-    if (this.sprite.y < -this.scene.wHeight) {
-      this.scene.scene.start('Game')
+  onCollision(event, bodyA, bodyB) {
+    if (bodyA.label === 'life') {
+      return this.getLife(bodyA)
     }
-    this.spotlight.x = this.sprite.x
-    this.spotlight.y = this.sprite.y
+    if (bodyB.label === 'life') {
+      return this.getLife(bodyB)
+    }
+    if (bodyA.label === 'coin') {
+      return this.getCoin(bodyA)
+    }
+    if (bodyB.label === 'coin') {
+      return this.getCoin(bodyB)
+    }
+    if (bodyA.label === 'platform' || bodyB.label === 'platform') {
+      const v = this.sprite.body.velocity.y
+      if (v > 10) {
+        if (v > 12) {
+          this.scene.cameras.main.shake(v * 7, v / 800)
+        }
+        this.sprite.burst(Math.ceil(v) * 4)
+      }
+      this.setActive(true)
+    }
+  }
 
-    if (this.sprite.drawLine) {
-      this.scene.cameras.main.scrollY = this.cameraY
-      // this.scene.cameras.main.scrollX = this.cameraX
-    }
+  wasClickedOn() {
+    return (
+      this.sprite.drawLine ||
+      this.sprite.body.speed >= 10 ||
+      !this.sprite.canBeClicked
+    )
   }
 }

@@ -1,3 +1,6 @@
+import { Coin } from './Coin'
+import { Life } from './Life'
+
 export default class Platforms {
   constructor(scene) {
     this.scene = scene
@@ -75,27 +78,5 @@ export default class Platforms {
       coin.setActive(true)
       coin.setVisible(true)
     }
-  }
-}
-
-class Life extends Phaser.Physics.Matter.Sprite {
-  constructor(scene, x, y) {
-    super(scene.matter.world, x, y, 'flares', 'green')
-    this.setDepth(2)
-    this.setSensor(true)
-    this.setScale(2)
-    this.setStatic(true)
-    this.body.ignorePointer = true
-    this.body.label = 'life'
-  }
-}
-class Coin extends Phaser.Physics.Matter.Sprite {
-  constructor(scene, x, y) {
-    super(scene.matter.world, x, y, 'flares', 'yellow')
-    this.setDepth(2)
-    this.setSensor(true)
-    this.setStatic(true)
-    this.body.label = 'coin'
-    this.body.ignorePointer = true
   }
 }

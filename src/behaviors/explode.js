@@ -26,8 +26,9 @@ export const EXPLODE = {
       .stop()
 
     entity.burst = (quantity) => {
-      if (quantity > 100)
+      if (quantity > 100) {
         bigChunkEmitter.explode(quantity / 8, entity.x, entity.y)
+      }
       smallChunkEmitter.explode(quantity, entity.x, entity.y)
     }
     entity.coinBurst = (quantity) => {
@@ -60,6 +61,7 @@ const COIN_BURST_CONFIG = {
   gravityY: 800,
   blendMode: 'ADD',
 }
+
 const BIG_CHUNK_CONFIG = {
   frame: 'red',
   speed: { min: -1500, max: 1500 },
@@ -70,6 +72,7 @@ const BIG_CHUNK_CONFIG = {
   gravityY: 800,
   blendMode: 'ADD',
 }
+
 const SMALL_CHUNK_CONFIG = {
   frame: 'blue',
   speed: { min: -1000, max: 1000 },
