@@ -1,3 +1,13 @@
+class Coin extends Phaser.Physics.Matter.Sprite {
+  constructor(scene, x, y) {
+    super(scene.matter.world, x, y, 'flares', 'yellow')
+    this.setDepth(2)
+    this.setSensor(true)
+    this.setStatic(true)
+    this.body.label = 'coin'
+  }
+}
+
 export default class Platforms {
   constructor(scene) {
     this.scene = scene
@@ -5,7 +15,23 @@ export default class Platforms {
     this.height = this.scene.cameras.main.height
     this.sprites = []
     this.update = this.update.bind(this)
+    this.coinGroup = this.scene.add.group({
+      classType: Coin,
+      maxSize: 20,
+    })
+
     let platformY = this.height - 100
+
+    for (let i = 0; i < 10; i++) {
+      const coin = this.coinGroup.get(
+        Phaser.Math.RND.between(500, 3000),
+        Phaser.Math.RND.between(-5000, 300),
+      )
+      if (coin) {
+        coin.setActive(true)
+        coin.setVisible(true)
+      }
+    }
 
     let platform = this.scene.matter.add
       .image(this.wWidth, platformY, 'platform', null, {

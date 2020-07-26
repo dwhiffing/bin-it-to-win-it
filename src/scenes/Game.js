@@ -9,11 +9,11 @@ export default class extends Phaser.Scene {
 
   init() {
     this.behavior = this.plugins.get('BehaviorPlugin')
-
     this.width = this.cameras.main.width
     this.height = this.cameras.main.height
-    this.wWidth = this.width * 20
-    this.wHeight = this.height * 100
+    this.wWidth = this.width * 10
+    this.wHeight = this.height * 20
+    this.scoreValue = 0
   }
 
   create() {
@@ -39,7 +39,18 @@ export default class extends Phaser.Scene {
     this.platforms = new Platforms(this)
     this.player = new Player(this, this.noClipGroup)
 
+    this.scoreText = this.add.text(this.width / 2, this.height + 1100, '0', {
+      fontSize: 150,
+    })
+    this.scoreText.setScrollFactor(0)
+    this.scoreText.setDepth(2)
+
     this.setupWorld()
+  }
+
+  updateScore(addedScore) {
+    this.scoreValue += addedScore
+    this.scoreText.text = this.scoreValue
   }
 
   update() {

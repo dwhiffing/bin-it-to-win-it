@@ -22,7 +22,6 @@ export default class Player {
     this.sprite.behaviors.set('pointerLine', POINTER_LINE, {})
     this.cameraY = this.scene.cameras.main.scrollY
     this.sprite.setDepth(2)
-
     this.sprite.alpha = 0.01
 
     this.sprite.on('pointerdown', () => {
@@ -34,6 +33,12 @@ export default class Player {
     })
 
     this.scene.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+      if (bodyA.label === 'coin') {
+        return this.getCoin(bodyA)
+      }
+      if (bodyB.label === 'coin') {
+        return this.getCoin(bodyB)
+      }
       if (bodyA.label === 'platform' || bodyB.label === 'platform') {
         if (this.sprite.body.velocity.y > 10) {
           if (this.sprite.body.velocity.y > 12) {
@@ -86,6 +91,14 @@ export default class Player {
     this.setLineActive(false)
     this.setActive(false)
     this.spring.stopDrag()
+  }
+
+  getCoin(coinBody) {
+    if (!coinBody.gameObject.active) return
+    this.sprite.coinBurst(80)
+    coinBody.gameObject.setActive(false)
+    coinBody.gameObject.setVisible(false)
+    this.scene.updateScore(50)
   }
 
   update() {
