@@ -19,6 +19,11 @@ export const EXPLODE = {
       .setBlendMode(Phaser.BlendModes.ADD)
       .startFollow(entity)
       .stop()
+    const lifeBurstEmitter = particles
+      .createEmitter(LIFE_BURST_CONFIG)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .startFollow(entity)
+      .stop()
 
     entity.burst = (quantity) => {
       if (quantity > 100)
@@ -28,7 +33,21 @@ export const EXPLODE = {
     entity.coinBurst = (quantity) => {
       coinBurstEmitter.explode(quantity, entity.x, entity.y)
     }
+    entity.lifeBurst = (quantity) => {
+      lifeBurstEmitter.explode(quantity, entity.x, entity.y)
+    }
   },
+}
+
+const LIFE_BURST_CONFIG = {
+  frame: 'green',
+  speed: { min: -1000, max: 1000 },
+  angle: { min: 0, max: 360 },
+  scale: { start: 1, end: 0.4 },
+  alpha: { start: 1, end: 0 },
+  lifespan: 900,
+  gravityY: 800,
+  blendMode: 'ADD',
 }
 
 const COIN_BURST_CONFIG = {

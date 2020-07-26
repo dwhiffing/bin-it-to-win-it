@@ -46,9 +46,10 @@ export const SMOKE = {
   },
 
   update: function (entity) {
+    if (!entity || !entity.body) return
     const dist = entity.body.speed
     const scale = Phaser.Math.Clamp(100 / dist, 0.4, 2.5)
-    entity.smoke2.setFrame(entity.active ? 'white' : 'red')
+    entity.smoke2.setFrame(entity.canBeClicked ? 'white' : 'red')
     entity.smoke.setQuantity(Math.ceil(dist / 10))
     entity.smoke.setSpeed({ min: dist * 4, max: dist * 7 })
     entity.smoke.setScale({
@@ -59,9 +60,6 @@ export const SMOKE = {
     entity.smoke2.setLifespan(50 + dist * 2)
     entity.smoke2.setQuantity(Math.ceil(dist / 30))
 
-    // zoom = Phaser.Math.Clamp(0.8 - dist / 200, 0.35, 0.8)
-    zoom = 0.4
-    entity.scene.cameras.main.setZoom(zoom)
     lastX = entity.x
     lastY = entity.y
   },

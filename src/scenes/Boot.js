@@ -47,13 +47,14 @@ export default class extends Phaser.Scene {
     })
 
     this.load.on('complete', () => {
+      this.registry.set('lives', 0).set('score', 0)
       // WebFont.load({
       //   custom: {
       //     families: ['AnotherHand'],
       //   },
       //   active: () => {
       progress.destroy()
-      this.scene.start('Game')
+      this.scene.start('Menu')
       // },
       //   })
     })

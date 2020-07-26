@@ -43,6 +43,7 @@ export const POINTER_LINE = {
   },
 
   update: function (entity, options) {
+    if (!entity || !entity.scene) return
     const pointerCoords = entity.scene.input.activePointer.positionToCamera(
       entity.scene.cameras.main,
     )

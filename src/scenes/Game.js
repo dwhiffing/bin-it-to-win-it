@@ -8,15 +8,15 @@ export default class extends Phaser.Scene {
   }
 
   init() {
-    this.behavior = this.plugins.get('BehaviorPlugin')
     this.width = this.cameras.main.width
     this.height = this.cameras.main.height
     this.wWidth = this.width * 10
     this.wHeight = this.height * 20
-    this.scoreValue = 0
   }
 
   create() {
+    this.registry.set('lives', 5).set('score', 0)
+    this.behavior = this.plugins.get('BehaviorPlugin')
     this.noClipGroup = this.matter.world.nextGroup(true)
     this.clipGroup = this.matter.world.nextGroup()
 
@@ -28,7 +28,7 @@ export default class extends Phaser.Scene {
         this.height,
         'bg',
       )
-      .setScale(7)
+      .setScale(3)
       .setTint(0x444444)
       .setScrollFactor(0)
       .setDepth(1)
@@ -39,18 +39,7 @@ export default class extends Phaser.Scene {
     this.platforms = new Platforms(this)
     this.player = new Player(this, this.noClipGroup)
 
-    this.scoreText = this.add.text(this.width / 2, this.height + 1100, '0', {
-      fontSize: 150,
-    })
-    this.scoreText.setScrollFactor(0)
-    this.scoreText.setDepth(2)
-
     this.setupWorld()
-  }
-
-  updateScore(addedScore) {
-    this.scoreValue += addedScore
-    this.scoreText.text = this.scoreValue
   }
 
   update() {
@@ -58,10 +47,10 @@ export default class extends Phaser.Scene {
     this.behavior.update()
     this.player.update()
     this.platforms.update()
-    // this.bg.setTilePosition(
-    //   this.cameras.main.scrollX / 10,
-    //   this.cameras.main.scrollY / 15,
-    // )
+    this.bg.setTilePosition(
+      this.cameras.main.scrollX / 5,
+      this.cameras.main.scrollY / 7,
+    )
   }
 
   setupWorld() {
@@ -69,21 +58,37 @@ export default class extends Phaser.Scene {
       pointerStartY,
       isPanning = false
     this.input.on('pointerdown', (pointer) => {
-      if (!this.player.sprite.drawLine && this.player.sprite.body.speed < 1) {
-        isPanning = true
-        startX = this.cameras.main.scrollX
-        startY = this.cameras.main.scrollY
+      if (
+        !this.player.sprite.drawLine &&
+        this.player.sprite.body.speed < 10 &&
+        this.player.sprite.canBeClicked
+      ) {
+        this.cameras.main.stopFollow()
+        this.player.sprite.body.ignorePointer = true
         pointerStartX = pointer.x
         pointerStartY = pointer.y
-        this.player.sprite.body.ignorePointer = true
-        this.cameras.main.stopFollow()
+        this.tweens.add({
+          targets: [this.bg],
+          scale: 7,
+          duration: 500,
+          ease: 'Quad.easeInOut',
+        })
+        this.cameras.main.zoomTo(0.15, 500, 'Quad.easeInOut', true, (c, p) => {
+          if (p === 1) {
+            isPanning = true
+          }
+        })
       }
     })
 
     this.input.on('pointermove', (pointer) => {
       if (isPanning) {
+        let spriteY = this.player.sprite.y
+        if (spriteY > -2500) {
+          spriteY = -2500
+        }
         const diffX = this.player.sprite.x + (pointerStartX - pointer.x) * 10
-        const diffY = this.player.sprite.y + (pointerStartY - pointer.y) * 5
+        const diffY = spriteY + (pointerStartY - pointer.y) * 20
         this.cameras.main.pan(
           diffX,
           diffY - this.player.sprite.width,
@@ -107,6 +112,23 @@ export default class extends Phaser.Scene {
         true,
         (camera, progress) => {
           if (progress === 1) {
+            this.tweens.add({
+              targets: [this.bg],
+              scale: 3,
+              duration: 500,
+              ease: 'Quad.easeInOut',
+            })
+            this.cameras.main.zoomTo(
+              0.6,
+              500,
+              'Quad.easeInOut',
+              true,
+              (c, p) => {
+                if (p === 1) {
+                  isPanning = false
+                }
+              },
+            )
             this.cameras.main.startFollow(
               this.player.sprite,
               true,
@@ -122,9 +144,19 @@ export default class extends Phaser.Scene {
 
     this.cameras.main.startFollow(this.player.sprite, true, 0.2, 0.2, 0, 300)
     this.cameras.main.setDeadzone(100, 100)
-    this.cameras.main.setZoom(1)
+    this.cameras.main.setZoom(0.6)
     const totalHeight = this.wHeight + this.height
-    this.matter.world.setBounds(0, -this.wHeight, this.wWidth, totalHeight, 500)
+    this.matter.world.setBounds(
+      0,
+      -this.wHeight,
+      this.wWidth,
+      totalHeight,
+      500,
+      true,
+      true,
+      false,
+      true,
+    )
     this.cameras.main.setBounds(0, -this.wHeight, this.wWidth, totalHeight)
   }
 }

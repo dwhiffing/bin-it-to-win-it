@@ -33,6 +33,12 @@ export default class Player {
     })
 
     this.scene.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+      if (bodyA.label === 'life') {
+        return this.getLife(bodyA)
+      }
+      if (bodyB.label === 'life') {
+        return this.getLife(bodyB)
+      }
       if (bodyA.label === 'coin') {
         return this.getCoin(bodyA)
       }
@@ -66,11 +72,14 @@ export default class Player {
 
   setActive(active) {
     if (active) {
-      this.sprite.active = true
+      this.sprite.canBeClicked = true
       this.sprite.body.ignorePointer = false
       this.sprite.setTint(0x44aa44)
+      if (this.scene.livesValue === 0) {
+        this.scene.scene.start('Menu')
+      }
     } else {
-      this.sprite.active = false
+      this.sprite.canBeClicked = false
       this.sprite.setTint(0xaaaaaa)
       this.sprite.body.ignorePointer = true
     }
@@ -79,8 +88,11 @@ export default class Player {
   setLineActive(active) {
     if (active) {
       this.cameraY = this.scene.cameras.main.scrollY
+      this.cameraX = this.scene.cameras.main.scrollX
       this.sprite.particleEmitter.emitters.list.forEach((e) => e.start())
       this.sprite.drawLine = true
+      this.startX = this.sprite.x
+      this.startY = this.sprite.y
     } else {
       this.sprite.particleEmitter.emitters.list.forEach((e) => e.stop())
       this.sprite.drawLine = false
@@ -91,6 +103,19 @@ export default class Player {
     this.setLineActive(false)
     this.setActive(false)
     this.spring.stopDrag()
+
+    const diffY = this.startY - this.sprite.y
+    if (this.sprite.body.speed > 20 || diffY > 1500) {
+      this.scene.registry.values.lives -= 1
+    }
+  }
+
+  getLife(lifeBody) {
+    if (!lifeBody.gameObject.active) return
+    this.sprite.lifeBurst(160)
+    lifeBody.gameObject.setActive(false)
+    lifeBody.gameObject.setVisible(false)
+    this.scene.registry.values.lives += 1
   }
 
   getCoin(coinBody) {
@@ -98,15 +123,19 @@ export default class Player {
     this.sprite.coinBurst(80)
     coinBody.gameObject.setActive(false)
     coinBody.gameObject.setVisible(false)
-    this.scene.updateScore(50)
+    this.scene.registry.values.score += 50
   }
 
   update() {
+    if (this.sprite.y < -this.scene.wHeight) {
+      this.scene.scene.start('Game')
+    }
     this.spotlight.x = this.sprite.x
     this.spotlight.y = this.sprite.y
 
     if (this.sprite.drawLine) {
       this.scene.cameras.main.scrollY = this.cameraY
+      this.scene.cameras.main.scrollX = this.cameraX
     }
   }
 }

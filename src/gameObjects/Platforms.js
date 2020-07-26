@@ -1,3 +1,13 @@
+class Life extends Phaser.Physics.Matter.Sprite {
+  constructor(scene, x, y) {
+    super(scene.matter.world, x, y, 'flares', 'green')
+    this.setDepth(2)
+    this.setSensor(true)
+    this.setScale(2)
+    this.setStatic(true)
+    this.body.label = 'life'
+  }
+}
 class Coin extends Phaser.Physics.Matter.Sprite {
   constructor(scene, x, y) {
     super(scene.matter.world, x, y, 'flares', 'yellow')
@@ -15,12 +25,25 @@ export default class Platforms {
     this.height = this.scene.cameras.main.height
     this.sprites = []
     this.update = this.update.bind(this)
+    this.lifeGroup = this.scene.add.group({
+      classType: Life,
+      maxSize: 10,
+    })
     this.coinGroup = this.scene.add.group({
       classType: Coin,
       maxSize: 20,
     })
 
     let platformY = this.height - 100
+
+    const life = this.lifeGroup.get(
+      Phaser.Math.RND.between(500, 500),
+      Phaser.Math.RND.between(300, 300),
+    )
+    if (life) {
+      life.setActive(true)
+      life.setVisible(true)
+    }
 
     for (let i = 0; i < 10; i++) {
       const coin = this.coinGroup.get(
@@ -45,7 +68,7 @@ export default class Platforms {
     platform.body.label = 'platform'
 
     while (platformY > -this.scene.wHeight) {
-      platformY -= Phaser.Math.RND.between(400, 800)
+      platformY -= Phaser.Math.RND.between(800, 1500)
       let xOffset = Phaser.Math.RND.between(0, this.scene.wWidth)
       let xScale = Phaser.Math.RND.between(300, 600)
       const platform = this.scene.matter.add
