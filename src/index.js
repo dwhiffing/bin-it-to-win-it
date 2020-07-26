@@ -5,7 +5,7 @@ import BehaviorPlugin from './behavior'
 var config = {
   type: Phaser.AUTO,
   width: 1080,
-  height: 1920,
+  height: 1750,
   backgroundColor: '#1d332f',
   parent: 'phaser-example',
   plugins: {
@@ -16,7 +16,7 @@ var config = {
     matter: {
       // debug: true,
       gravity: {
-        y: 2,
+        y: 3,
       },
     },
   },
