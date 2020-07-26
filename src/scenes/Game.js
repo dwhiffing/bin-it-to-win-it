@@ -58,18 +58,73 @@ export default class extends Phaser.Scene {
     this.behavior.update()
     this.player.update()
     this.platforms.update()
-    this.bg.setTilePosition(
-      this.cameras.main.scrollX / 10,
-      this.cameras.main.scrollY / 15,
-    )
+    // this.bg.setTilePosition(
+    //   this.cameras.main.scrollX / 10,
+    //   this.cameras.main.scrollY / 15,
+    // )
   }
 
   setupWorld() {
+    let pointerStartX,
+      pointerStartY,
+      isPanning = false
+    this.input.on('pointerdown', (pointer) => {
+      if (!this.player.sprite.drawLine && this.player.sprite.body.speed < 1) {
+        isPanning = true
+        startX = this.cameras.main.scrollX
+        startY = this.cameras.main.scrollY
+        pointerStartX = pointer.x
+        pointerStartY = pointer.y
+        this.player.sprite.body.ignorePointer = true
+        this.cameras.main.stopFollow()
+      }
+    })
+
+    this.input.on('pointermove', (pointer) => {
+      if (isPanning) {
+        const diffX = this.player.sprite.x + (pointerStartX - pointer.x) * 10
+        const diffY = this.player.sprite.y + (pointerStartY - pointer.y) * 5
+        this.cameras.main.pan(
+          diffX,
+          diffY - this.player.sprite.width,
+          0,
+          'Linear',
+          true,
+        )
+        // this.cameras.main.setScroll(diffX * 10, diffY * 5)
+      }
+    })
+
+    this.input.on('pointerup', () => {
+      if (!isPanning) return
+      isPanning = false
+      this.player.sprite.body.ignorePointer = false
+      this.cameras.main.pan(
+        this.player.sprite.x,
+        this.player.sprite.y - this.player.sprite.width,
+        500,
+        'Quad.easeInOut',
+        true,
+        (camera, progress) => {
+          if (progress === 1) {
+            this.cameras.main.startFollow(
+              this.player.sprite,
+              true,
+              0.2,
+              0.2,
+              0,
+              300,
+            )
+          }
+        },
+      )
+    })
+
     this.cameras.main.startFollow(this.player.sprite, true, 0.2, 0.2, 0, 300)
     this.cameras.main.setDeadzone(100, 100)
-    this.cameras.main.setZoom(0.5)
+    this.cameras.main.setZoom(1)
     const totalHeight = this.wHeight + this.height
-    this.cameras.main.setBounds(0, -this.wHeight, this.wWidth, totalHeight)
     this.matter.world.setBounds(0, -this.wHeight, this.wWidth, totalHeight, 500)
+    this.cameras.main.setBounds(0, -this.wHeight, this.wWidth, totalHeight)
   }
 }

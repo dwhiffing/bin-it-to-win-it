@@ -6,7 +6,7 @@ export default class Player {
     this.setActive = this.setActive.bind(this)
     this.release = this.release.bind(this)
     this.sprite = scene.matter.add
-      .image(this.scene.width / 2, 400, 'ball', null, {
+      .image(this.scene.wWidth / 2, 400, 'ball', null, {
         shape: 'circle',
         mass: 5,
       })
@@ -53,7 +53,7 @@ export default class Player {
       }
     })
 
-    this.spotlight = this.scene.lights.addLight(0, 0, 1200, 0xffffff, 2)
+    this.spotlight = this.scene.lights.addLight(0, 0, 12000, 0xffffff, 2)
 
     this.spring = this.scene.matter.add.mouseSpring({
       stiffness: 0.005,
