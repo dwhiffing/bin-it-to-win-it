@@ -75,7 +75,7 @@ export default class Player {
       this.sprite.canBeClicked = true
       this.sprite.body.ignorePointer = false
       this.sprite.setTint(0x44aa44)
-      if (this.scene.livesValue === 0) {
+      if (this.scene.registry.values.lives === 0) {
         this.scene.scene.start('Menu')
       }
     } else {

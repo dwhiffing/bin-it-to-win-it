@@ -5,6 +5,7 @@ class Life extends Phaser.Physics.Matter.Sprite {
     this.setSensor(true)
     this.setScale(2)
     this.setStatic(true)
+    this.body.ignorePointer = true
     this.body.label = 'life'
   }
 }
@@ -15,6 +16,7 @@ class Coin extends Phaser.Physics.Matter.Sprite {
     this.setSensor(true)
     this.setStatic(true)
     this.body.label = 'coin'
+    this.body.ignorePointer = true
   }
 }
 
@@ -31,7 +33,7 @@ export default class Platforms {
     })
     this.coinGroup = this.scene.add.group({
       classType: Coin,
-      maxSize: 20,
+      maxSize: 500,
     })
 
     let platformY = this.height - 100
@@ -43,17 +45,6 @@ export default class Platforms {
     if (life) {
       life.setActive(true)
       life.setVisible(true)
-    }
-
-    for (let i = 0; i < 10; i++) {
-      const coin = this.coinGroup.get(
-        Phaser.Math.RND.between(500, 3000),
-        Phaser.Math.RND.between(-5000, 300),
-      )
-      if (coin) {
-        coin.setActive(true)
-        coin.setVisible(true)
-      }
     }
 
     let platform = this.scene.matter.add
@@ -70,17 +61,22 @@ export default class Platforms {
     while (platformY > -this.scene.wHeight) {
       platformY -= Phaser.Math.RND.between(800, 1500)
       let xOffset = Phaser.Math.RND.between(0, this.scene.wWidth)
-      let xScale = Phaser.Math.RND.between(300, 600)
+      let xPos = this.width / 2 + xOffset
       const platform = this.scene.matter.add
-        .image(this.width / 2 + xOffset, platformY, 'platform', null, {
+        .image(xPos, platformY, 'platform', null, {
           isStatic: true,
         })
-        .setOrigin(0.5, 1)
         .setDepth(1)
         .setTint(0xff9955)
-        .setScale(xScale / 100, 1)
         .setCollisionGroup(this.scene.clipGroup)
         .setPipeline('Light2D')
+      for (let i = 0; i < 10; i++) {
+        const coin = this.coinGroup.get(-440 + xPos + i * 100, platformY - 120)
+        if (coin) {
+          coin.setActive(true)
+          coin.setVisible(true)
+        }
+      }
       this.sprites.push(platform)
       platform.body.label = 'platform'
     }
