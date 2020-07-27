@@ -129,24 +129,26 @@ export default class Player {
   }
 
   getLife(lifeBody) {
-    if (!lifeBody.gameObject.active) return
+    const life = lifeBody.gameObject
+    if (!life.active) return
     this.sprite.lifeBurst(160)
     this.coinSound.play()
-    lifeBody.gameObject.setActive(false)
-    lifeBody.gameObject.setVisible(false)
+    life.setActive(false)
+    life.setVisible(false)
     this.scene.registry.values.lives += 5
-    lifeBody.gameObject.emit('scoreText')
-    this.scene.registry.values.score += lifeBody.gameObject.score
+    this.scene.platforms.textGroup.get().spawn(life.x, life.y, life.score)
+    this.scene.registry.values.score += life.score
   }
 
   getCoin(coinBody) {
-    if (!coinBody.gameObject.active) return
+    const coin = coinBody.gameObject
+    if (!coin.active) return
     this.sprite.coinBurst(40)
     this.coinSound.play()
-    coinBody.gameObject.setActive(false)
-    coinBody.gameObject.setVisible(false)
-    coinBody.gameObject.emit('scoreText')
-    this.scene.registry.values.score += coinBody.gameObject.score
+    coin.setActive(false)
+    coin.setVisible(false)
+    this.scene.platforms.textGroup.get().spawn(coin.x, coin.y, coin.score)
+    this.scene.registry.values.score += coin.score
   }
 
   onCollision(event, bodyA, bodyB) {

@@ -2,6 +2,32 @@ import { Coin } from './Coin'
 import { Life } from './Life'
 import { CLOUD } from '../behaviors'
 import { CLOUDS_ENABLED, Y_STEP } from '../constants'
+import { times } from 'lodash'
+
+class Text extends Phaser.GameObjects.Text {
+  constructor(scene) {
+    super(scene, 0, 0, '', { fontFamily: 'AnotherHand', fontSize: 100 })
+    this.setStroke(0x000000, 10)
+    this.spawn = this.spawn.bind(this)
+  }
+
+  spawn(x, y, score) {
+    this.setActive(true)
+    this.x = x
+    this.y = y
+    this.alpha = 1
+    this.setText(`${score}`)
+  }
+
+  update(entity) {
+    super.update()
+    if (this.active) {
+      this.y -= 1
+      this.alpha -= 0.01
+      if (this.alpha <= 0) this.setActive(false)
+    }
+  }
+}
 
 export default class Platforms {
   constructor(scene) {
@@ -11,12 +37,16 @@ export default class Platforms {
     this.sprites = []
     this.update = this.update.bind(this)
     this.lifeGroup = this.scene.add.group({ classType: Life, maxSize: 100 })
-    this.coinGroup = this.scene.add.group({ classType: Coin, maxSize: 5000 })
+    this.coinGroup = this.scene.add.group({ classType: Coin, maxSize: 1000 })
+    this.textGroup = this.scene.add.group({ classType: Text, maxSize: 20 })
+    this.textGroup.get().spawn(0, 0, 0)
+    this.textGroup.get().spawn(0, 0, 0)
 
     this.generateLevel()
   }
 
   update() {
+    this.textGroup.getChildren().forEach((p) => p.update())
     this.sprites.forEach((p) =>
       p.setCollisionGroup(
         this.scene.player.sprite.body.velocity.y > 0 &&

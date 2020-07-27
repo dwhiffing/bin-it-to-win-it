@@ -11,8 +11,6 @@ export class Coin extends Phaser.Physics.Matter.Sprite {
     this.body.label = 'coin'
     this.body.ignorePointer = true
     this.scene = scene
-    this.scene.behavior.enable(this)
     this.score = 50
-    this.behaviors.set('scoreText', SCORE_TEXT)
   }
 }

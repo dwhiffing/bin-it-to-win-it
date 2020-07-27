@@ -87,8 +87,12 @@ export default class extends Phaser.Scene {
       .on('pointerdown', () => {
         this.coinSound.play()
         this.music.stop()
-        this.scene.launch('Hud')
-        this.scene.start('Game')
+        this.cameras.main.fadeOut(900, 50, 102, 148, (c, p) => {
+          if (p === 1) {
+            this.scene.launch('Hud')
+            this.scene.start('Game')
+          }
+        })
       })
     this.add
       .image(this.width / 2, this.height - 470, 'helpButton')
