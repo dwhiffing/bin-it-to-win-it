@@ -3,9 +3,6 @@ import Platforms from '../gameObjects/Platforms'
 import {
   WORLD_SIZE,
   INITIAL_LIVES,
-  BG_SCALE,
-  BG_COLOR,
-  BG_SCROLL_FACTOR,
   ZOOM_LEVELS,
   SCROLL_SPEED,
   ZOOM_SPEED,
@@ -33,6 +30,7 @@ export default class extends Phaser.Scene {
     this.clipGroup = this.matter.world.nextGroup()
     this.registry.values.score = 0
     this.registry.values.lives = INITIAL_LIVES
+    this.cameras.main.fadeIn(900, 50, 102, 148)
 
     this.setupBg()
     this.platforms = new Platforms(this)
@@ -46,6 +44,22 @@ export default class extends Phaser.Scene {
     this.behavior.update()
     this.player.update()
     this.platforms.update()
+    let hue = Phaser.Math.Clamp(
+      Math.abs(this.player.sprite.y / 300000),
+      0,
+      0.07,
+    )
+    this.skyColor = Phaser.Display.Color.HSVToRGB(
+      0.6 - hue,
+      0.66,
+      0.58 + hue * 2,
+    )
+    this.cameras.main.backgroundColor.setTo(
+      this.skyColor.r,
+      this.skyColor.g,
+      this.skyColor.b,
+    )
+
     // this.bg.setTilePosition(
     //   this.cameras.main.scrollX / BG_SCROLL_FACTOR.x,
     //   this.cameras.main.scrollY / 200,

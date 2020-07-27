@@ -54,7 +54,19 @@ export default class Player {
 
   update() {
     if (this.sprite.y < -this.scene.wHeight) {
-      this.scene.scene.start('Game')
+      if (!this.fading) {
+        this.fading = true
+        this.scene.cameras.main.fade(
+          1000,
+          this.scene.skyColor.r,
+          this.scene.skyColor.g,
+          this.scene.skyColor.b,
+          false,
+          (c, p) => {
+            p === 1 && this.scene.scene.start('Game')
+          },
+        )
+      }
     }
     this.spotlight.x = this.sprite.x
     this.spotlight.y = this.sprite.y
