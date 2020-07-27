@@ -1,3 +1,5 @@
+import { SCORE_TEXT } from '../behaviors'
+
 export class Life extends Phaser.Physics.Matter.Sprite {
   constructor(scene, x, y) {
     super(scene.matter.world, x, y, 'flares', 'green')
@@ -8,5 +10,9 @@ export class Life extends Phaser.Physics.Matter.Sprite {
     this.setBlendMode('SCREEN')
     this.body.ignorePointer = true
     this.body.label = 'life'
+    this.scene = scene
+    this.scene.behavior.enable(this)
+    this.score = 500
+    this.behaviors.set('scoreText', SCORE_TEXT)
   }
 }

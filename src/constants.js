@@ -1,6 +1,6 @@
 export const Y_STEP = 3500
 export const WORLD_SIZE = { x: 8, y: 11 }
-export const INITIAL_LIVES = 3
+export const INITIAL_LIVES = 10
 export const BG_SCALE = 9
 export const BG_COLOR = 0xcccccc
 export const BG_SCROLL_FACTOR = { x: 10, y: 11 }

@@ -135,7 +135,8 @@ export default class Player {
     lifeBody.gameObject.setActive(false)
     lifeBody.gameObject.setVisible(false)
     this.scene.registry.values.lives += 5
-    this.scene.registry.values.score += 500
+    lifeBody.gameObject.emit('scoreText')
+    this.scene.registry.values.score += lifeBody.gameObject.score
   }
 
   getCoin(coinBody) {
@@ -144,7 +145,8 @@ export default class Player {
     this.coinSound.play()
     coinBody.gameObject.setActive(false)
     coinBody.gameObject.setVisible(false)
-    this.scene.registry.values.score += 50
+    coinBody.gameObject.emit('scoreText')
+    this.scene.registry.values.score += coinBody.gameObject.score
   }
 
   onCollision(event, bodyA, bodyB) {
