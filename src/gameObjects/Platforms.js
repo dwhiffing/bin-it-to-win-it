@@ -1,7 +1,7 @@
 import { Coin } from './Coin'
 import { Life } from './Life'
 import { CLOUD } from '../behaviors'
-import { CLOUDS_ENABLED } from '../constants'
+import { CLOUDS_ENABLED, Y_STEP } from '../constants'
 
 export default class Platforms {
   constructor(scene) {
@@ -10,38 +10,10 @@ export default class Platforms {
     this.height = this.scene.cameras.main.height
     this.sprites = []
     this.update = this.update.bind(this)
-    this.lifeGroup = this.scene.add.group({ classType: Life, maxSize: 10 })
-    this.coinGroup = this.scene.add.group({ classType: Coin, maxSize: 500 })
+    this.lifeGroup = this.scene.add.group({ classType: Life, maxSize: 100 })
+    this.coinGroup = this.scene.add.group({ classType: Coin, maxSize: 5000 })
 
-    let yPos = this.height - 100
-    let plat = this.createPlatform(0, yPos, 9)
-    plat.x = this.scene.wWidth / 2
-    let index = 0
-    while (yPos > -this.scene.wHeight) {
-      const { wWidth } = this.scene
-      yPos -= 5000
-      // let xPos = Phaser.Math.RND.pick([0, 1, 2])
-      let xPos = [1, 0, 1, 2][index++ % 4]
-      const isLife = index % 5 === 0
-      const platform = this.createPlatform(xPos, yPos, isLife ? 9 : 3)
-      const platformPositions = [
-        platform.width * 1.6,
-        wWidth / 2,
-        wWidth - platform.width * 1.6,
-      ]
-      const x = platformPositions[xPos]
-      platform.x = x
-      this.sprites.push(platform)
-
-      if (isLife) {
-        this.createLife(wWidth / 2, yPos - 600)
-        platform.x = platformPositions[1]
-      } else {
-        for (let i = 0; i < 5; i++) {
-          this.createCoin(-1050 + x + i * 500, yPos - 250)
-        }
-      }
-    }
+    this.generateLevel()
   }
 
   update() {
@@ -55,10 +27,72 @@ export default class Platforms {
     )
   }
 
+  generateLevel() {
+    const { wWidth } = this.scene
+    let yPos = this.height - 100
+
+    // create floor
+    let plat = this.createPlatform(0, yPos, 9)
+    plat.x = wWidth / 2
+
+    let index = 0
+    const level = this.scene.registry.get('areanum')
+    while (yPos > -this.scene.wHeight + 6000) {
+      const yStep = Phaser.Math.Clamp(Y_STEP + 400 * (level - 1), 0, 9000)
+      yPos -= yStep
+
+      // place safety floor every 5 floors
+      const isLife = (index + 1) % 5 === 0
+      const platform = this.createPlatform(0, yPos, isLife ? 9 : 4)
+
+      // TODO: need to be able to swap floor patterns and put more than one platform per yPos
+      const w = platform.width * 1.6
+      platform.x = [w, wWidth / 2, wWidth - w][[1, 0, 1, 2][index % 4]]
+      this.sprites.push(platform)
+      if (isLife) {
+        this.createLife(wWidth / 2, yPos - 1200)
+        platform.x = wWidth / 2
+      }
+
+      if (index > 0) {
+        // TODO: need to be able to place coins in different patterns based on the level
+        Phaser.Actions.PlaceOnLine(
+          this.getCoins(4 + level),
+          new Phaser.Geom.Line(
+            platform.x,
+            yPos * 0.97,
+            platform.x +
+              [wWidth / 4, wWidth / 4, wWidth / -4, wWidth / -4][index % 4],
+            yPos + yStep * 0.6,
+          ),
+        )
+      }
+
+      Phaser.Actions.PlaceOnCircle(
+        this.getCoins(12 + 2 * level),
+        new Phaser.Geom.Circle(
+          platform.x,
+          yPos - 1200 - 50 * level,
+          800 + 25 * level,
+        ),
+      )
+      index++
+    }
+  }
+
+  getCoins(count) {
+    let coins = []
+    for (let i = 0; i < count; i++) {
+      coins.push(this.createCoin(0, 0))
+    }
+    return coins
+  }
+
   createPlatform(x, y, scale = 1) {
     let platform = this.scene.matter.add
       .image(x, y, 'platform', null, { isStatic: true })
       .setDepth(1)
+      .setOrigin(0.5, 0.65)
       .setScale(scale)
       .setCollisionGroup(this.scene.clipGroup)
     platform.body.label = 'platform'
@@ -75,6 +109,7 @@ export default class Platforms {
       life.setActive(true)
       life.setVisible(true)
     }
+    return life
   }
 
   createCoin(x, y) {
@@ -83,5 +118,6 @@ export default class Platforms {
       coin.setActive(true)
       coin.setVisible(true)
     }
+    return coin
   }
 }

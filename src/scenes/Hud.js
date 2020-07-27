@@ -1,6 +1,6 @@
 export default class extends Phaser.Scene {
   constructor() {
-    super({ key: 'Hud', active: true })
+    super({ key: 'Hud' })
   }
 
   init() {
@@ -18,17 +18,29 @@ export default class extends Phaser.Scene {
       .setOrigin(0.5)
       .setStroke(0x000000, 10)
 
+    this.levelText = this.add
+      .text(
+        this.width / 2,
+        this.height - 100,
+        `level ${this.registry.values.areanum}`,
+        {
+          fontFamily: 'AnotherHand',
+          fontSize: 80,
+        },
+      )
+      .setVisible(false)
+      .setOrigin(0.5)
+      .setStroke(0x000000, 8)
+
     this.livesText = this.add
-      .text(this.width / 2, this.height - 100, this.registry.values.lives, {
+      .text(100, this.height - 100, `x${this.registry.values.lives}`, {
         fontFamily: 'AnotherHand',
         fontSize: 80,
       })
       .setOrigin(0.5)
       .setVisible(false)
       .setStroke(0x000000, 10)
-
-    this.registry.events.on('changedata-score', this.updateScore, this)
-    this.registry.events.on('changedata-lives', this.updateLives, this)
+    this.registry.events.on('changedata', this.updateData, this)
     this.scene
       .get('Game')
       .events.on('start', this.show, this)
@@ -40,14 +52,16 @@ export default class extends Phaser.Scene {
   hide() {
     this.livesText.setVisible(false)
     this.scoreText.setVisible(false)
+    this.levelText.setVisible(false)
     this.mute.setVisible(false)
   }
 
   show() {
     this.livesText.setVisible(true)
+    this.levelText.setVisible(true)
     this.scoreText.setVisible(true)
     if (!this.mute) {
-      this.mute = this.add.image(this.width - 130, this.height - 180, 'icon')
+      this.mute = this.add.image(this.width - 130, this.height - 160, 'icon')
       this.mute.setOrigin(0)
       this.mute.setFrame(window.isMuted ? 2 : 1)
       this.mute
@@ -63,11 +77,9 @@ export default class extends Phaser.Scene {
     this.mute.setVisible(true)
   }
 
-  updateScore(parent, value) {
-    this.scoreText.text = value
-  }
-
-  updateLives(parent, value) {
-    this.livesText.text = value
+  updateData(parent, key, value) {
+    if (key === 'score') this.scoreText.text = value
+    if (key === 'lives') this.livesText.text = `x${value}`
+    if (key === 'areanum') this.levelText.text = `level ${value}`
   }
 }

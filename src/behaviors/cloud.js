@@ -23,9 +23,7 @@ export const CLOUD = {
     })
   },
 
-  update: function (entity) {
-    // console.log(bodyEmitter)
-  },
+  update: function (entity) {},
 }
 const BODY_OPTIONS = {
   lifespan: { min: 5000, max: 7000 },

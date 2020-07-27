@@ -14,22 +14,21 @@ export default class extends Phaser.Scene {
     super({ key: 'Game' })
   }
 
-  init() {
+  init(opts) {
     this.width = this.cameras.main.width
     this.height = this.cameras.main.height
-    this.wWidth = this.width * WORLD_SIZE.x
-    this.wHeight = this.height * WORLD_SIZE.y
-    this.whoosh = this.sound.add('whoosh2')
-    this.music = this.sound.add('gameMusic', { loop: true, volume: 0.7 })
-    this.music.play()
   }
 
   create() {
+    this.whoosh = this.sound.add('whoosh2')
+    this.music = this.sound.add('gameMusic', { loop: true, volume: 0.7 })
+    this.wWidth = this.width * WORLD_SIZE.x
+    this.wHeight =
+      this.height *
+      Phaser.Math.Clamp(WORLD_SIZE.y + 2 * this.registry.get('areanum'), 11, 41)
     this.behavior = this.plugins.get('BehaviorPlugin')
     this.noClipGroup = this.matter.world.nextGroup(true)
     this.clipGroup = this.matter.world.nextGroup()
-    this.registry.values.score = 0
-    this.registry.values.lives = INITIAL_LIVES
     this.cameras.main.fadeIn(900, 50, 102, 148)
 
     this.setupBg()

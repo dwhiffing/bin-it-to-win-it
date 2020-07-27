@@ -27,7 +27,7 @@ export default class extends Phaser.Scene {
     g.fillRect(0, 0, width, height)
 
     this.add
-      .text(width / 2 - 10, 200, 'Light\nPendulum', {
+      .text(width / 2 - 10, 150, 'Light\nPendulum', {
         fontFamily: 'AnotherHand',
         fontSize: 100,
       })
@@ -35,6 +35,21 @@ export default class extends Phaser.Scene {
       .setOrigin(0.5)
       .setAlpha(0.8)
       .setStroke(0x000000, 10)
+
+    this.creditText = this.add
+      .text(
+        width / 2,
+        height - 140,
+        'Created by Daniel Whiffing\n\nMusic by Purple Planet',
+        {
+          fontFamily: 'Arial',
+          fontSize: 50,
+          align: 'center',
+          color: '#ffffff',
+        },
+      )
+      .setShadow(2, 2, '#333333', 2, false, true)
+    this.creditText.setOrigin(0.5)
 
     this.helpText = this.add
       .text(width / 2, height / 2 - 100, INSTRUCTIONS, {
@@ -46,25 +61,8 @@ export default class extends Phaser.Scene {
       .setShadow(2, 2, '#333333', 2, false, true)
     this.helpText.setOrigin(0.5)
 
-    this.creditText = this.add
-      .text(
-        width / 2,
-        height - 450,
-        'Created by: Daniel Whiffing\n\nMusic: Purple Planet',
-        {
-          fontFamily: 'Arial',
-          fontSize: 32,
-          align: 'center',
-          color: '#ffffff',
-        },
-      )
-      .setShadow(2, 2, '#333333', 2, false, true)
-    this.creditText.setOrigin(0.5)
-
     this.add
-      .sprite(width / 2, height - 220, 'backButton')
-      .setScale(1.2)
-      .setFrame(2)
+      .sprite(width / 2, height - 470, 'backButton')
       .setInteractive()
       .on('pointerdown', () => {
         if (this.scene.isPaused('Game')) {
@@ -75,8 +73,8 @@ export default class extends Phaser.Scene {
         }
       })
     this.mute = this.add.image(
-      this.cameras.main.width - 150,
-      this.cameras.main.height - 150,
+      this.cameras.main.width - 130,
+      this.cameras.main.height - 160,
       'icon',
     )
     this.mute.setOrigin(0)

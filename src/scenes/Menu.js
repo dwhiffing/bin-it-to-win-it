@@ -1,3 +1,5 @@
+import { INITIAL_LIVES } from '../constants'
+
 export default class extends Phaser.Scene {
   constructor() {
     super({ key: 'Menu' })
@@ -9,6 +11,10 @@ export default class extends Phaser.Scene {
   }
 
   create() {
+    this.registry.set('areanum', 10)
+    this.registry.set('score', 0)
+    this.registry.set('lives', INITIAL_LIVES)
+
     this.add.image(this.width / 2, this.height - 100, 'platform').setScale(3)
     let line = new Phaser.Geom.Line(
       1400,
@@ -41,7 +47,7 @@ export default class extends Phaser.Scene {
       .start()
     this.music = this.sound.add('menuMusic', { loop: true, volume: 0.35 })
     this.music.play()
-    this.sound = this.sound.add('coin')
+    this.coinSound = this.sound.add('coin')
     this.add
       .text(this.width / 2 - 10, 500, 'Light\nPendulum', {
         fontFamily: 'AnotherHand',
@@ -52,7 +58,7 @@ export default class extends Phaser.Scene {
       .setAlpha(0.8)
       .setStroke(0x000000, 10)
 
-    this.mute = this.add.image(this.width - 130, this.height - 180, 'icon')
+    this.mute = this.add.image(this.width - 130, this.height - 160, 'icon')
     this.mute.setOrigin(0)
     this.mute.setFrame(window.isMuted ? 2 : 1)
     this.mute.setInteractive().on('pointerdown', () => {
@@ -65,15 +71,16 @@ export default class extends Phaser.Scene {
       .image(this.width / 2, this.height - 600, 'playButton')
       .setInteractive()
       .on('pointerdown', () => {
-        this.sound.play()
+        this.coinSound.play()
         this.music.stop()
+        this.scene.launch('Hud')
         this.scene.start('Game')
       })
     this.add
       .image(this.width / 2, this.height - 470, 'helpButton')
       .setInteractive()
       .on('pointerdown', () => {
-        this.sound.play()
+        this.coinSound.play()
         this.scene.launch('Credits')
       })
   }

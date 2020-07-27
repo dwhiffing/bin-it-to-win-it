@@ -10,7 +10,7 @@ export default class Player {
         shape: 'circle',
         mass: 5,
       })
-      .setScale(0.5)
+      .setScale(0.8)
       .setFriction(0.5)
       .setBounce(0.4)
       .setInteractive()
@@ -63,7 +63,13 @@ export default class Player {
           this.scene.skyColor.b,
           false,
           (c, p) => {
-            p === 1 && this.scene.scene.start('Game')
+            if (p === 1) {
+              this.scene.registry.set(
+                'areanum',
+                this.scene.registry.values.areanum + 1,
+              )
+              this.scene.scene.start('Game')
+            }
           },
         )
       }
@@ -131,12 +137,13 @@ export default class Player {
     this.coinSound.play()
     lifeBody.gameObject.setActive(false)
     lifeBody.gameObject.setVisible(false)
-    this.scene.registry.values.lives += 1
+    this.scene.registry.values.lives += 5
+    this.scene.registry.values.score += 500
   }
 
   getCoin(coinBody) {
     if (!coinBody.gameObject.active) return
-    this.sprite.coinBurst(80)
+    this.sprite.coinBurst(40)
     this.coinSound.play()
     coinBody.gameObject.setActive(false)
     coinBody.gameObject.setVisible(false)
