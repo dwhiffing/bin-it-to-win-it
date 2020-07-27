@@ -59,6 +59,5 @@ const GHOST_OPTIONS = {
   speed: { min: -100, max: 100 },
   quantity: 4,
   lifespan: 1000,
-  // emitZone: { source: entity.line },
   blendMode: 'ADD',
 }

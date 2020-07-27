@@ -43,10 +43,10 @@ export default class extends Phaser.Scene {
     this.behavior.update()
     this.player.update()
     this.platforms.update()
-    this.bg.setTilePosition(
-      this.cameras.main.scrollX / BG_SCROLL_FACTOR.x,
-      this.cameras.main.scrollY / BG_SCROLL_FACTOR.y,
-    )
+    // this.bg.setTilePosition(
+    //   this.cameras.main.scrollX / BG_SCROLL_FACTOR.x,
+    //   this.cameras.main.scrollY / BG_SCROLL_FACTOR.y,
+    // )
   }
 
   setupWorld() {
@@ -103,21 +103,18 @@ export default class extends Phaser.Scene {
   }
 
   setupBg() {
-    this.bg = this.add
-      .tileSprite(
-        this.width / 2,
-        this.height / 2,
-        this.width,
-        this.height,
-        'bg',
-      )
-      .setScale(BG_SCALE)
-      .setTint(0x444444)
-      .setScrollFactor(0)
-      .setDepth(1)
-      .setPipeline('Light2D')
-    this.lights.enable()
-    this.lights.setAmbientColor(BG_COLOR)
+    // this.bg = this.add
+    //   .tileSprite(
+    //     this.width / 2,
+    //     this.height / 2,
+    //     this.width,
+    //     this.height,
+    //     'bg',
+    //   )
+    //   .setScale(BG_SCALE)
+    //   // .setTint(0x444444)
+    //   .setScrollFactor(0)
+    //   .setDepth(1)
   }
 
   followPlayer() {

@@ -39,6 +39,10 @@ export default class extends Phaser.Scene {
       'assets/images/platform.png',
       'assets/images/platform-map.png',
     ])
+    this.load.image('cloud', [
+      'assets/images/cloud.png',
+      'assets/images/cloud-map.png',
+    ])
     this.load.image('smoke', 'assets/images/smoke2.png')
     this.load.image('playButton', 'assets/images/button.png')
     this.load.spritesheet('icon', 'assets/images/icons.png', {

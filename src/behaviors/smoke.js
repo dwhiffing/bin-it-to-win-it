@@ -25,7 +25,7 @@ export const SMOKE = {
     const dist = entity.body.speed
 
     bodyEmitter
-      .setFrame(entity.canBeClicked ? 'white' : 'red')
+      .setFrame(entity.canBeClicked ? 'blue' : 'red')
       .setScale({
         start: Phaser.Math.Clamp(100 / dist, 0.4, 2.5),
         end: 0.3,
