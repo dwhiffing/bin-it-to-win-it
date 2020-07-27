@@ -24,14 +24,12 @@ export const SMOKE = {
 
     const dist = entity.body.speed
 
-    bodyEmitter
-      .setFrame(entity.canBeClicked ? 'blue' : 'red')
-      .setScale({
-        start: Phaser.Math.Clamp(100 / dist, 0.4, 2.5),
-        end: 0.3,
-      })
-      .setLifespan(50 + dist * 2)
-      .setQuantity(Math.ceil(dist / 30))
+    bodyEmitter.setFrame(entity.canBeClicked ? 'blue' : 'red').setScale({
+      start: Phaser.Math.Clamp(100 / dist, 0.4, 2.5),
+      end: 0.3,
+    })
+    // .setLifespan(50 + dist * 2)
+    // .setQuantity(Math.ceil(dist / 30))
 
     sparkEmitter
       .setQuantity(Math.ceil(dist / 10))

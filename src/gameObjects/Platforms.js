@@ -1,6 +1,7 @@
 import { Coin } from './Coin'
 import { Life } from './Life'
 import { CLOUD } from '../behaviors'
+import { CLOUDS_ENABLED } from '../constants'
 
 export default class Platforms {
   constructor(scene) {
@@ -13,16 +14,16 @@ export default class Platforms {
     this.coinGroup = this.scene.add.group({ classType: Coin, maxSize: 500 })
 
     let yPos = this.height - 100
-    let plat = this.createPlatform(0, yPos, 8)
+    let plat = this.createPlatform(0, yPos, 9)
     plat.x = this.scene.wWidth / 2
     let index = 0
     while (yPos > -this.scene.wHeight) {
       const { wWidth } = this.scene
-      yPos -= 3000
+      yPos -= 5000
       // let xPos = Phaser.Math.RND.pick([0, 1, 2])
       let xPos = [1, 0, 1, 2][index++ % 4]
       const isLife = index % 5 === 0
-      const platform = this.createPlatform(xPos, yPos, isLife ? 8 : 3)
+      const platform = this.createPlatform(xPos, yPos, isLife ? 9 : 3)
       const platformPositions = [
         platform.width * 1.6,
         wWidth / 2,
@@ -33,7 +34,7 @@ export default class Platforms {
       this.sprites.push(platform)
 
       if (isLife) {
-        this.createLife(wWidth / 2, yPos - 250)
+        this.createLife(wWidth / 2, yPos - 600)
         platform.x = platformPositions[1]
       } else {
         for (let i = 0; i < 5; i++) {
@@ -61,8 +62,10 @@ export default class Platforms {
       .setScale(scale)
       .setCollisionGroup(this.scene.clipGroup)
     platform.body.label = 'platform'
-    this.scene.behavior.enable(platform)
-    platform.behaviors.set('cloud', CLOUD, {})
+    if (CLOUDS_ENABLED) {
+      this.scene.behavior.enable(platform)
+      platform.behaviors.set('cloud', CLOUD, {})
+    }
     return platform
   }
 

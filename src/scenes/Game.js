@@ -22,6 +22,9 @@ export default class extends Phaser.Scene {
     this.height = this.cameras.main.height
     this.wWidth = this.width * WORLD_SIZE.x
     this.wHeight = this.height * WORLD_SIZE.y
+    this.whoosh = this.sound.add('whoosh2')
+    this.music = this.sound.add('gameMusic', { loop: true, volume: 0.7 })
+    this.music.play()
   }
 
   create() {
@@ -45,12 +48,13 @@ export default class extends Phaser.Scene {
     this.platforms.update()
     // this.bg.setTilePosition(
     //   this.cameras.main.scrollX / BG_SCROLL_FACTOR.x,
-    //   this.cameras.main.scrollY / BG_SCROLL_FACTOR.y,
+    //   this.cameras.main.scrollY / 200,
     // )
   }
 
   setupWorld() {
     this.followPlayer()
+    this.zoomTo(0, () => {}, 0)
     this.panning = false
 
     this.input.on('pointerdown', this.startScrolling.bind(this))
@@ -65,7 +69,7 @@ export default class extends Phaser.Scene {
   }
 
   startScrolling(pointer) {
-    if (!this.player.wasClickedOn()) {
+    if (!this.player.wasClickedOn() && !this.panning) {
       this.cameras.main.stopFollow()
       this.player.sprite.body.ignorePointer = true
       this.scrollStartX = pointer.x
@@ -94,25 +98,23 @@ export default class extends Phaser.Scene {
     const { x, y, width, body } = this.player.sprite
     this.panning = false
     body.ignorePointer = false
-    this.panTo(x, y - width, () => {
-      this.followPlayer()
-      this.zoomTo(0, () => {
-        this.panning = false
-      })
-    })
+    this.panTo(
+      x,
+      y - width,
+      () => {
+        this.followPlayer()
+        this.zoomTo(0, () => {
+          this.panning = false
+        })
+      },
+      200,
+    )
   }
 
   setupBg() {
     // this.bg = this.add
-    //   .tileSprite(
-    //     this.width / 2,
-    //     this.height / 2,
-    //     this.width,
-    //     this.height,
-    //     'bg',
-    //   )
-    //   .setScale(BG_SCALE)
-    //   // .setTint(0x444444)
+    //   .tileSprite(0, 0, this.width, this.height, 'bg')
+    //   .setScale(10)
     //   .setScrollFactor(0)
     //   .setDepth(1)
   }
@@ -120,7 +122,6 @@ export default class extends Phaser.Scene {
   followPlayer() {
     this.cameras.main.startFollow(this.player.sprite, true, 0.2, 0.2, 0, 300)
     this.cameras.main.setDeadzone(this.width - 200, 100)
-    this.zoomTo(0, () => {}, 0)
   }
 
   panTo(x, y, callback, duration = ZOOM_SPEED, ease = 'Quad.easeInOut') {
@@ -130,6 +131,9 @@ export default class extends Phaser.Scene {
   }
 
   zoomTo(level, callback = () => {}, duration = ZOOM_SPEED) {
+    if ((level === 0 || level === 2) && duration > 0) {
+      this.whoosh.play()
+    }
     this.cameras.main.zoomTo(
       ZOOM_LEVELS[level],
       duration,

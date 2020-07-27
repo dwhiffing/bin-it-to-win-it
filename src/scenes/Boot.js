@@ -25,25 +25,25 @@ export default class extends Phaser.Scene {
       'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js',
     )
 
-    this.load.image('bg', ['assets/images/bg.jpg', 'assets/images/bg-map.png'])
+    this.load.audio('menuMusic', 'assets/audio/menu-music.mp3')
+    this.load.audio('gameMusic', 'assets/audio/game-music.mp3')
+    this.load.audio('hit0', 'assets/audio/hit0.mp3')
+    this.load.audio('hit1', 'assets/audio/hit1.mp3')
+    this.load.audio('hit2', 'assets/audio/hit2.mp3')
+    this.load.audio('hit3', 'assets/audio/hit3.mp3')
+    this.load.audio('whoosh', 'assets/audio/whoosh1.mp3')
+    this.load.audio('whoosh2', 'assets/audio/whoosh3.mp3')
+    this.load.audio('throw', 'assets/audio/throw.mp3')
+    this.load.audio('coin', 'assets/audio/coin.mp3')
+
     this.load.atlas(
       'flares',
       'assets/images/flares.png',
       'assets/images/flares.json',
     )
-    this.load.image('ball', [
-      'assets/images/ball.png',
-      'assets/images/ball-map.png',
-    ])
-    this.load.image('platform', [
-      'assets/images/platform.png',
-      'assets/images/platform-map.png',
-    ])
-    this.load.image('cloud', [
-      'assets/images/cloud.png',
-      'assets/images/cloud-map.png',
-    ])
-    this.load.image('smoke', 'assets/images/smoke2.png')
+    this.load.image('ball', 'assets/images/ball.png')
+    this.load.image('platform', 'assets/images/platform.png')
+    this.load.image('cloud', 'assets/images/cloud.png')
     this.load.image('playButton', 'assets/images/button.png')
     this.load.spritesheet('icon', 'assets/images/icons.png', {
       frameWidth: 100,
@@ -52,15 +52,15 @@ export default class extends Phaser.Scene {
 
     this.load.on('complete', () => {
       this.registry.set('lives', 0).set('score', 0)
-      // WebFont.load({
-      //   custom: {
-      //     families: ['AnotherHand'],
-      //   },
-      //   active: () => {
-      progress.destroy()
-      this.scene.start('Menu')
-      // },
-      //   })
+      WebFont.load({
+        custom: {
+          families: ['AnotherHand'],
+        },
+        active: () => {
+          progress.destroy()
+          this.scene.start('Menu')
+        },
+      })
     })
   }
 }

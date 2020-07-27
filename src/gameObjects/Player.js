@@ -23,6 +23,13 @@ export default class Player {
     this.setActive = this.setActive.bind(this)
     this.release = this.release.bind(this)
     this.sprite.release = this.release.bind(this)
+    this.hits = []
+    this.throwSound = this.scene.sound.add('whoosh', { volume: 0.5 })
+    this.coinSound = this.scene.sound.add('coin')
+    this.hits.push(this.scene.sound.add('hit0'))
+    this.hits.push(this.scene.sound.add('hit1'))
+    this.hits.push(this.scene.sound.add('hit2'))
+    this.hits.push(this.scene.sound.add('hit3'))
 
     this.scene.behavior.enable(this.sprite)
     this.sprite.behaviors.set('smoke', SMOKE, {})
@@ -94,6 +101,7 @@ export default class Player {
   }
 
   release() {
+    this.throwSound.play()
     this.setLineActive(false)
     this.setActive(false)
     this.spring.stopDrag()
@@ -108,6 +116,7 @@ export default class Player {
   getLife(lifeBody) {
     if (!lifeBody.gameObject.active) return
     this.sprite.lifeBurst(160)
+    this.coinSound.play()
     lifeBody.gameObject.setActive(false)
     lifeBody.gameObject.setVisible(false)
     this.scene.registry.values.lives += 1
@@ -116,6 +125,7 @@ export default class Player {
   getCoin(coinBody) {
     if (!coinBody.gameObject.active) return
     this.sprite.coinBurst(80)
+    this.coinSound.play()
     coinBody.gameObject.setActive(false)
     coinBody.gameObject.setVisible(false)
     this.scene.registry.values.score += 50
@@ -136,12 +146,24 @@ export default class Player {
     }
     if (bodyA.label === 'platform' || bodyB.label === 'platform') {
       const v = this.sprite.body.velocity.y
-      if (v > 10) {
-        if (v > 12) {
-          this.scene.cameras.main.shake(v * 7, v / 800)
+      let sound = 0
+
+      if (v > 30) {
+        sound = 1
+        if (v > 60) {
+          this.scene.cameras.main.shake(v * 5, v / 1000)
+          sound = 2
         }
-        this.sprite.burst(Math.ceil(v) * 4)
+        if (v > 90) {
+          sound = 3
+        }
+        this.sprite.burst(Math.ceil(v) * 2)
       }
+
+      if (v > 2) {
+        this.hits[sound].play()
+      }
+
       this.setActive(true)
     }
   }

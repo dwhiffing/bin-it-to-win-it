@@ -7,3 +7,4 @@ export const SCROLL_SPEED = 15
 export const ZOOM_LEVELS = [0.5, 0.3, 0.125]
 export const ZOOM_SPEED = 300
 export const CAMERA_OFFSET_Y = -2500
+export const CLOUDS_ENABLED = true

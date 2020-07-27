@@ -10,9 +10,8 @@ export const CLOUD = {
       ...BODY_OPTIONS,
       emitZone: {
         source: line,
-        type: 'edge',
-        yoyo: true,
-        quantity: 5,
+        type: 'random',
+        quantity: 1,
       },
     })
     bodyEmitter.setBlendMode(Phaser.BlendModes.SCREEN)
@@ -29,7 +28,7 @@ export const CLOUD = {
   },
 }
 const BODY_OPTIONS = {
-  lifespan: { min: 6000, max: 12000 },
+  lifespan: { min: 5000, max: 7000 },
   speed: { min: -10, max: 10 },
   angle: { min: 0, max: 360 },
   rotate: { min: -100, max: 100 },
@@ -38,7 +37,7 @@ const BODY_OPTIONS = {
   scale: { start: 0.2, end: 2.5 },
   x: { min: -150, max: 150 },
   y: { min: 0, max: 0 },
-  quantity: 5,
-  frequency: 2500,
+  quantity: 2,
+  frequency: 4000,
   blendMode: 'SCREEN',
 }
