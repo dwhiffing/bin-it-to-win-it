@@ -49,7 +49,7 @@ export default class extends Phaser.Scene {
       .start()
     this.music = this.sound.add('menuMusic', { loop: true, volume: 0.35 })
     this.music.play()
-    this.coinSound = this.sound.add('coin')
+    this.coinSound = this.sound.add('win')
     this.add
       .text(this.width / 2 - 10, 500, 'Light\nPendulum', {
         fontFamily: 'AnotherHand',
@@ -98,7 +98,6 @@ export default class extends Phaser.Scene {
       .image(this.width / 2, this.height - 470, 'helpButton')
       .setInteractive()
       .on('pointerdown', () => {
-        this.coinSound.play()
         this.scene.launch('Credits')
       })
   }

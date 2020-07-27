@@ -2,7 +2,6 @@ import { Coin } from './Coin'
 import { Life } from './Life'
 import { CLOUD } from '../behaviors'
 import { CLOUDS_ENABLED, Y_STEP } from '../constants'
-import { times } from 'lodash'
 
 class Text extends Phaser.GameObjects.Text {
   constructor(scene) {
@@ -36,9 +35,18 @@ export default class Platforms {
     this.height = this.scene.cameras.main.height
     this.sprites = []
     this.update = this.update.bind(this)
-    this.lifeGroup = this.scene.add.group({ classType: Life, maxSize: 100 })
-    this.coinGroup = this.scene.add.group({ classType: Coin, maxSize: 1000 })
-    this.textGroup = this.scene.add.group({ classType: Text, maxSize: 20 })
+    this.lifeGroup = this.scene.add.group({
+      classType: Life,
+      maxSize: 100,
+    })
+    this.coinGroup = this.scene.add.group({
+      classType: Coin,
+      maxSize: 1000,
+    })
+    this.textGroup = this.scene.add.group({
+      classType: Text,
+      maxSize: 20,
+    })
     this.textGroup.get().spawn(0, 0, 0)
     this.textGroup.get().spawn(0, 0, 0)
 
@@ -59,6 +67,7 @@ export default class Platforms {
 
   generateLevel() {
     const { wWidth } = this.scene
+
     let yPos = this.height - 100
 
     // create floor
@@ -71,42 +80,126 @@ export default class Platforms {
       const yStep = Phaser.Math.Clamp(Y_STEP + 400 * (level - 1), 0, 9000)
       yPos -= yStep
 
-      // place safety floor every 5 floors
-      const isLife = (index + 1) % 5 === 0
-      const platform = this.createPlatform(0, yPos, isLife ? 9 : 4)
-
-      // TODO: need to be able to swap floor patterns and put more than one platform per yPos
-      const w = platform.width * 1.6
-      platform.x = [w, wWidth / 2, wWidth - w][[1, 0, 1, 2][index % 4]]
-      this.sprites.push(platform)
-      if (isLife) {
-        this.createLife(wWidth / 2, yPos - 1200)
-        platform.x = wWidth / 2
+      const layout = this.getLayout()
+      let floorData = layout[index % layout.length]
+      if (!Array.isArray(floorData)) {
+        floorData = [floorData]
       }
 
-      if (index > 0) {
-        // TODO: need to be able to place coins in different patterns based on the level
-        Phaser.Actions.PlaceOnLine(
-          this.getCoins(4 + level),
-          new Phaser.Geom.Line(
-            platform.x,
-            yPos * 0.97,
-            platform.x +
-              [wWidth / 4, wWidth / 4, wWidth / -4, wWidth / -4][index % 4],
-            yPos + yStep * 0.6,
-          ),
-        )
-      }
+      floorData.forEach((floor) => this.generateFloor(floor, index, yPos))
 
+      index++
+    }
+  }
+
+  generateFloor(floor, index, yPos) {
+    const platform = this.createPlatform(0, yPos, floor.s || 4)
+    platform.x = floor.x
+    platform.y += floor.y || 0
+
+    this.sprites.push(platform)
+    const isLife = floor.l
+    if (isLife) {
+      this.createLife(platform.x, yPos - 1200)
+    }
+
+    this.generateCoins(floor.c || [], index, platform.x, platform.y)
+  }
+
+  getLayout() {
+    const { wWidth } = this.scene
+    const w = 1600
+    const h = wWidth / 2
+    const e = wWidth - w
+    let LAYOUTS = [
+      [
+        { x: w, s: 2, c: [0] },
+        { x: h, s: 2, c: [0] },
+        { x: e, s: 2, l: true, c: [0, 3] },
+      ],
+      [
+        [
+          { x: w, s: 2.3, c: [0, 3] },
+          { x: h, s: 2.3, c: [0, 3] },
+          { x: e, s: 2.3, c: [0, 3] },
+        ],
+        [
+          { x: w, s: 2.3 },
+          { x: e, s: 2.3 },
+        ],
+        [
+          { x: w, s: 2.3, c: [0, 3] },
+          { x: h, s: 2.3, c: [0] },
+          { x: e, s: 2.3, c: [0, 3] },
+        ],
+        { x: h, s: 9, l: true, c: [0, 3] },
+      ],
+      [
+        { x: h, c: [0] },
+        { x: w, c: [1] },
+        { x: h, c: [2] },
+        { x: e, c: [2] },
+        { s: 9, x: h, l: true, c: [1, 3] },
+      ],
+      [
+        [{ x: w, s: 2.3, c: [1, 3] }],
+        [{ x: e, s: 2.3, c: [2, 3] }],
+        [{ x: w, s: 2.3, c: [1, 3] }],
+        { x: h, s: 9, l: true, c: [] },
+      ],
+      [
+        [
+          { x: w, y: 0, s: 1, c: [0] },
+          { x: h, y: -1000, s: 1, c: [0] },
+          { x: e, y: -2000, s: 1, c: [0] },
+        ],
+        [
+          { x: e, y: 0, s: 1 },
+          { x: h, y: -1000, s: 1, c: [0] },
+          { x: w, y: -2000, s: 1, c: [0] },
+        ],
+        { s: 9, x: h, l: true, c: [3] },
+      ],
+    ]
+    const level = this.scene.registry.get('areanum')
+    if (level === 1) {
+      LAYOUTS[0] = [
+        { x: h, s: 9, c: [0] },
+        { x: h, s: 9, c: [0] },
+        { x: h, s: 9, l: true, c: [0, 3] },
+      ]
+    }
+    return LAYOUTS[(level - 1) % LAYOUTS.length]
+  }
+
+  generateCoins(coinLayouts, index, x, y) {
+    const { wWidth } = this.scene
+    const level = this.scene.registry.get('areanum')
+    const yStep = Phaser.Math.Clamp(Y_STEP + 400 * (level - 1), 0, 9000)
+    if (coinLayouts.includes(0)) {
+      Phaser.Actions.PlaceOnLine(
+        this.getCoins(4 + level),
+        new Phaser.Geom.Line(x, y * 0.97, x, y + yStep * 0.6),
+      )
+    }
+    if (coinLayouts.includes(1)) {
+      Phaser.Actions.PlaceOnLine(
+        this.getCoins(4 + level),
+        new Phaser.Geom.Line(x, y * 0.97, x + wWidth / 4, y + yStep * 0.6),
+      )
+    }
+    if (coinLayouts.includes(2)) {
+      Phaser.Actions.PlaceOnLine(
+        this.getCoins(4 + level),
+        new Phaser.Geom.Line(x, y * 0.97, x + wWidth / -4, y + yStep * 0.6),
+      )
+    }
+
+    if (coinLayouts.includes(3)) {
       Phaser.Actions.PlaceOnCircle(
         this.getCoins(12 + 2 * level),
-        new Phaser.Geom.Circle(
-          platform.x,
-          yPos - 1200 - 50 * level,
-          800 + 25 * level,
-        ),
+        new Phaser.Geom.Circle(x, y - 1200 - 50 * level, 800 + 25 * level),
       )
-      index++
     }
   }
 

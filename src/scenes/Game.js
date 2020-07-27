@@ -29,7 +29,11 @@ export default class extends Phaser.Scene {
     this.wWidth = this.width * WORLD_SIZE.x
     this.wHeight =
       this.height *
-      Phaser.Math.Clamp(WORLD_SIZE.y + 2 * this.registry.get('areanum'), 11, 41)
+      Phaser.Math.Clamp(
+        WORLD_SIZE.y + 3 * (this.registry.get('areanum') - 1),
+        6,
+        31,
+      )
     this.behavior = this.plugins.get('BehaviorPlugin')
     this.noClipGroup = this.matter.world.nextGroup(true)
     this.clipGroup = this.matter.world.nextGroup()
@@ -86,12 +90,14 @@ export default class extends Phaser.Scene {
   }
 
   startScrolling(pointer) {
-    if (!this.player.wasClickedOn() && !this.panning) {
+    if (!this.player.wasClickedOn() && !this.panning && !this.startedPanning) {
+      this.startedPanning = true
       this.cameras.main.stopFollow()
       this.player.sprite.body.ignorePointer = true
       this.scrollStartX = pointer.x
       this.scrollStartY = pointer.y
       this.zoomTo(2, () => {
+        this.startedPanning = false
         this.panning = true
       })
     }
@@ -112,6 +118,7 @@ export default class extends Phaser.Scene {
 
   stopScrolling() {
     if (!this.panning) return
+    this.startedPanning = false
     const { x, y, width, body } = this.player.sprite
     this.panning = false
     body.ignorePointer = false
@@ -121,6 +128,7 @@ export default class extends Phaser.Scene {
       () => {
         this.followPlayer()
         this.zoomTo(0, () => {
+          this.startedPanning = false
           this.panning = false
         })
       },

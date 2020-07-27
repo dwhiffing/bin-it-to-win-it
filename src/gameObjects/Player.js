@@ -25,7 +25,6 @@ export default class Player {
     this.sprite.release = this.release.bind(this)
     this.hits = []
     this.throwSound = this.scene.sound.add('whoosh', { volume: 0.5 })
-    this.coinSound = this.scene.sound.add('coin')
     this.hits.push(this.scene.sound.add('hit0'))
     this.hits.push(this.scene.sound.add('hit1'))
     this.hits.push(this.scene.sound.add('hit2'))
@@ -56,6 +55,7 @@ export default class Player {
     if (this.sprite.y < -this.scene.wHeight) {
       if (!this.fading) {
         this.fading = true
+        this.scene.sound.play('win')
         this.scene.cameras.main.fade(1000, 50, 102, 148, false, (c, p) => {
           if (p === 1) {
             this.scene.registry.set(
@@ -132,7 +132,7 @@ export default class Player {
     const life = lifeBody.gameObject
     if (!life.active) return
     this.sprite.lifeBurst(160)
-    this.coinSound.play()
+    this.scene.sound.play('coin')
     life.setActive(false)
     life.setVisible(false)
     this.scene.registry.values.lives += 5
@@ -144,7 +144,7 @@ export default class Player {
     const coin = coinBody.gameObject
     if (!coin.active) return
     this.sprite.coinBurst(40)
-    this.coinSound.play()
+    this.scene.sound.play('coin')
     coin.setActive(false)
     coin.setVisible(false)
     this.scene.platforms.textGroup.get().spawn(coin.x, coin.y, coin.score)

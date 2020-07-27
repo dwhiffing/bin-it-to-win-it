@@ -1,10 +1,10 @@
 const INSTRUCTIONS = `Fling the light pendulum upwards into the sky.
+
+Drag around it to see your surroundings.
+
+Careful! You only have so many flings.
         
-Drag to the side of it to see around you.
-
-Your score is at the top, your lives are at the bottom.
-
-Collect yellow lights for score, and green lights for lives.
+Collect lights for points; Green ones will give you more flings.
 
 It will get harder as you progress.
 

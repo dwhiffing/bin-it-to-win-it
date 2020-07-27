@@ -34,7 +34,8 @@ export default class extends Phaser.Scene {
     this.load.audio('whoosh', 'assets/audio/whoosh1.mp3')
     this.load.audio('whoosh2', 'assets/audio/whoosh3.mp3')
     this.load.audio('throw', 'assets/audio/throw.mp3')
-    this.load.audio('coin', 'assets/audio/coin.mp3')
+    this.load.audio('win', 'assets/audio/win.mp3')
+    this.load.audio('coin', 'assets/audio/coin.mp3', { instances: 5 })
 
     this.load.atlas(
       'flares',
