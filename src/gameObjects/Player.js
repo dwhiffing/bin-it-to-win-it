@@ -87,7 +87,11 @@ export default class Player {
       this.sprite.body.ignorePointer = false
       this.sprite.setTint(0x44aa44)
       if (this.scene.registry.values.lives === 0) {
-        this.scene.scene.start('Menu')
+        this.scene.cameras.main.fade(1000, 50, 102, 148, false, (c, p) => {
+          if (p === 1) {
+            this.scene.scene.start('Menu')
+          }
+        })
       }
     }
     if (!active && this.sprite.canBeClicked) {

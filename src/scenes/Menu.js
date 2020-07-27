@@ -8,6 +8,7 @@ export default class extends Phaser.Scene {
   init(opts) {
     this.width = this.cameras.main.width
     this.height = this.cameras.main.height
+    this.score = this.registry.get('score') || 0
   }
 
   create() {
@@ -15,6 +16,7 @@ export default class extends Phaser.Scene {
     this.registry.set('score', 0)
     this.registry.set('lives', INITIAL_LIVES)
 
+    this.cameras.main.fadeIn(900, 50, 102, 148)
     this.add.image(this.width / 2, this.height - 100, 'platform').setScale(3)
     let line = new Phaser.Geom.Line(
       1400,
@@ -57,6 +59,18 @@ export default class extends Phaser.Scene {
       .setOrigin(0.5)
       .setAlpha(0.8)
       .setStroke(0x000000, 10)
+
+    if (this.score) {
+      this.scoreText = this.add
+        .text(this.width / 2, this.height / 2 + 50, `Score ${this.score}`, {
+          fontFamily: 'AnotherHand',
+          fontSize: 80,
+          color: '#ffffff',
+        })
+        .setOrigin(0.5)
+        .setStroke(0x000000, 10)
+      this.scoreText.setOrigin(0.5)
+    }
 
     this.mute = this.add.image(this.width - 130, this.height - 160, 'icon')
     this.mute.setOrigin(0)
