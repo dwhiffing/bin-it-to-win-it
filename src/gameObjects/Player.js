@@ -56,22 +56,15 @@ export default class Player {
     if (this.sprite.y < -this.scene.wHeight) {
       if (!this.fading) {
         this.fading = true
-        this.scene.cameras.main.fade(
-          1000,
-          this.scene.skyColor.r,
-          this.scene.skyColor.g,
-          this.scene.skyColor.b,
-          false,
-          (c, p) => {
-            if (p === 1) {
-              this.scene.registry.set(
-                'areanum',
-                this.scene.registry.values.areanum + 1,
-              )
-              this.scene.scene.start('Game')
-            }
-          },
-        )
+        this.scene.cameras.main.fade(1000, 50, 102, 148, false, (c, p) => {
+          if (p === 1) {
+            this.scene.registry.set(
+              'areanum',
+              this.scene.registry.values.areanum + 1,
+            )
+            this.scene.scene.start('Game')
+          }
+        })
       }
     }
     this.spotlight.x = this.sprite.x

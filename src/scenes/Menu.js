@@ -11,7 +11,7 @@ export default class extends Phaser.Scene {
   }
 
   create() {
-    this.registry.set('areanum', 10)
+    this.registry.set('areanum', 1)
     this.registry.set('score', 0)
     this.registry.set('lives', INITIAL_LIVES)
 

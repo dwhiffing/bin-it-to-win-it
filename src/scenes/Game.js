@@ -20,8 +20,12 @@ export default class extends Phaser.Scene {
   }
 
   create() {
+    const level = this.registry.get('areanum')
     this.whoosh = this.sound.add('whoosh2')
-    this.music = this.sound.add('gameMusic', { loop: true, volume: 0.7 })
+    if (level === 1) {
+      this.music = this.sound.add('gameMusic', { loop: true, volume: 0.7 })
+      this.music.play()
+    }
     this.wWidth = this.width * WORLD_SIZE.x
     this.wHeight =
       this.height *
