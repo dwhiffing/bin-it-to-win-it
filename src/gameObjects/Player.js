@@ -143,7 +143,7 @@ export default class Player {
   getCoin(coinBody) {
     const coin = coinBody.gameObject
     if (!coin.active) return
-    this.sprite.coinBurst(40)
+    this.sprite.coinBurst(20)
     this.scene.sound.play('coin')
     coin.setActive(false)
     coin.setVisible(false)
