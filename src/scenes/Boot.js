@@ -45,6 +45,8 @@ export default class extends Phaser.Scene {
     this.load.image('platform', 'assets/images/platform.png')
     this.load.image('cloud', 'assets/images/cloud.png')
     this.load.image('playButton', 'assets/images/button.png')
+    this.load.image('helpButton', 'assets/images/help.png')
+    this.load.image('backButton', 'assets/images/back.png')
     this.load.spritesheet('icon', 'assets/images/icons.png', {
       frameWidth: 100,
       frameHeight: 100,

@@ -51,19 +51,6 @@ export default class extends Phaser.Scene {
       .setOrigin(0.5)
       .setAlpha(0.8)
       .setStroke(0x000000, 10)
-    this.add
-      .text(
-        this.width / 2,
-        this.height - 100,
-        'Created by Daniel Whiffing\nMusic by Purple Planet',
-        {
-          color: '#000000',
-          fontFamily: 'Arial',
-          fontSize: 30,
-        },
-      )
-      .setAlign('center')
-      .setOrigin(0.5)
 
     this.mute = this.add.image(this.width - 130, this.height - 180, 'icon')
     this.mute.setOrigin(0)
@@ -81,6 +68,13 @@ export default class extends Phaser.Scene {
         this.sound.play()
         this.music.stop()
         this.scene.start('Game')
+      })
+    this.add
+      .image(this.width / 2, this.height - 470, 'helpButton')
+      .setInteractive()
+      .on('pointerdown', () => {
+        this.sound.play()
+        this.scene.launch('Credits')
       })
   }
 }
