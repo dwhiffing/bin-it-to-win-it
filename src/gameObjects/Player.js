@@ -89,6 +89,7 @@ export default class Player {
       if (this.scene.registry.values.lives === 0) {
         this.scene.cameras.main.fade(1000, 50, 102, 148, false, (c, p) => {
           if (p === 1) {
+            this.scene.music.stop()
             this.scene.scene.start('Menu')
           }
         })

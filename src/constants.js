@@ -1,7 +1,7 @@
 export const Y_STEP = 3000
 export const MAX_Y_STEP = 6000
 export const WORLD_SIZE = { x: 8, y: 6 }
-export const INITIAL_LIVES = 1
+export const INITIAL_LIVES = 10
 export const BG_SCALE = 9
 export const BG_COLOR = 0xcccccc
 export const BG_SCROLL_FACTOR = { x: 10, y: 11 }
