@@ -1,14 +1,3 @@
-import Player from '../gameObjects/Player'
-import Platforms from '../gameObjects/Platforms'
-import {
-  WORLD_SIZE,
-  INITIAL_LIVES,
-  ZOOM_LEVELS,
-  SCROLL_SPEED,
-  ZOOM_SPEED,
-  CAMERA_OFFSET_Y,
-} from '../constants'
-
 export default class extends Phaser.Scene {
   constructor() {
     super({ key: 'Game' })
@@ -20,153 +9,145 @@ export default class extends Phaser.Scene {
   }
 
   create() {
-    const level = this.registry.get('areanum')
-    this.whoosh = this.sound.add('whoosh2')
-    if (level === 1) {
-      this.music = this.sound.add('gameMusic', { loop: true, volume: 0.7 })
-      this.music.play()
-    }
-    this.wWidth = this.width * WORLD_SIZE.x
-    this.wHeight =
-      this.height *
-      Phaser.Math.Clamp(
-        WORLD_SIZE.y + 3 * (this.registry.get('areanum') - 1),
-        6,
-        31,
-      )
     this.behavior = this.plugins.get('BehaviorPlugin')
-    this.noClipGroup = this.matter.world.nextGroup(true)
-    this.clipGroup = this.matter.world.nextGroup()
-    this.cameras.main.fadeIn(900, 50, 102, 148)
 
-    this.setupBg()
-    this.platforms = new Platforms(this)
-    this.player = new Player(this, this.noClipGroup)
+    this.shapes = this.cache.json.get('shapes')
+    this.nodes = []
 
-    this.setupWorld()
+    this.nodeCategory = this.matter.world.nextCategory()
+    this.capCategory = this.matter.world.nextCategory()
+
+    this.getBlock(1, 0, 'two')
+    this.getBlock(1, 1, 'hold')
+    this.getBlock(2, 1, 'flip')
+    this.getBlock(0, 2, 'left')
+    this.getBlock(1, 2, 'flip2')
+    this.getBlock(2, 2, 'hold2')
+    this.getBlock(0, 3, 'straight')
+    this.getBlock(1, 3, 'left')
+    this.getBlock(2, 3, 'right')
+    this.getBlock(0, 4, 'cup').setTint(0xff0000)
+    this.getBlock(3, 4, 'cup').setTint(0x00ff00)
+    this.cameras.main.setZoom(0.5)
+
+    this.input.keyboard.addKey('Z').on('down', (event) => {
+      this.getCircle(this.width / 2 - 90, -30, 0x00ff00)
+    })
+
+    this.input.keyboard.addKey('X').on('down', (event) => {
+      this.getCircle(this.width / 2 + 90, -30, 0xff0000)
+    })
   }
 
   update() {
     this.behavior.preUpdate()
     this.behavior.update()
-    this.player.update()
-    this.platforms.update()
-    let hue = Phaser.Math.Clamp(
-      Math.abs(this.player.sprite.y / 300000),
-      0,
-      0.07,
-    )
-    this.skyColor = Phaser.Display.Color.HSVToRGB(
-      0.6 - hue,
-      0.66,
-      0.58 + hue * 2,
-    )
-    this.cameras.main.backgroundColor.setTo(
-      this.skyColor.r,
-      this.skyColor.g,
-      this.skyColor.b,
-    )
-
-    // this.bg.setTilePosition(
-    //   this.cameras.main.scrollX / BG_SCROLL_FACTOR.x,
-    //   this.cameras.main.scrollY / 200,
-    // )
-  }
-
-  setupWorld() {
-    this.followPlayer()
-    this.zoomTo(0, () => {}, 0)
-    this.panning = false
-
-    this.input.on('pointerdown', this.startScrolling.bind(this))
-    this.input.on('pointermove', this.onScroll.bind(this))
-    this.input.on('pointerup', this.stopScrolling.bind(this))
-
-    const totalHeight = this.wHeight + this.height
-    const boundsOpts = [0, -this.wHeight, this.wWidth, totalHeight]
-    const wallsOpts = [true, true, false, true]
-    this.matter.world.setBounds(...boundsOpts, 500, ...wallsOpts)
-    this.cameras.main.setBounds(...boundsOpts)
-  }
-
-  startScrolling(pointer) {
-    if (!this.player.wasClickedOn() && !this.panning && !this.startedPanning) {
-      this.startedPanning = true
-      this.cameras.main.stopFollow()
-      this.player.sprite.body.ignorePointer = true
-      this.scrollStartX = pointer.x
-      this.scrollStartY = pointer.y
-      this.zoomTo(2, () => {
-        this.startedPanning = false
-        this.panning = true
-      })
-    }
-  }
-
-  onScroll(pointer) {
-    const { x, y, width } = this.player.sprite
-    if (this.panning) {
-      let spriteY = y
-      if (spriteY > CAMERA_OFFSET_Y) {
-        spriteY = CAMERA_OFFSET_Y
+    this.nodes.forEach((node) => {
+      if (node.y > 1600) {
+        node.cap && node.cap.setSensor(true)
       }
-      const diffX = x + (this.scrollStartX - pointer.x) * SCROLL_SPEED
-      const diffY = spriteY + (this.scrollStartY - pointer.y) * SCROLL_SPEED
-      this.panTo(diffX, diffY - width, () => {}, 0, 'Linear')
-    }
-  }
-
-  stopScrolling() {
-    if (!this.panning) return
-    this.startedPanning = false
-    const { x, y, width, body } = this.player.sprite
-    this.panning = false
-    body.ignorePointer = false
-    this.panTo(
-      x,
-      y - width,
-      () => {
-        this.followPlayer()
-        this.zoomTo(0, () => {
-          this.startedPanning = false
-          this.panning = false
-        })
-      },
-      200,
-    )
-  }
-
-  setupBg() {
-    // this.bg = this.add
-    //   .tileSprite(0, 0, this.width, this.height, 'bg')
-    //   .setScale(10)
-    //   .setScrollFactor(0)
-    //   .setDepth(1)
-  }
-
-  followPlayer() {
-    this.cameras.main.startFollow(this.player.sprite, true, 0.2, 0.2, 0, 300)
-    this.cameras.main.setDeadzone(this.width - 200, 100)
-  }
-
-  panTo(x, y, callback, duration = ZOOM_SPEED, ease = 'Quad.easeInOut') {
-    this.cameras.main.pan(x, y, duration, ease, true, (c, p) => {
-      p === 1 && callback && callback()
     })
   }
 
-  zoomTo(level, callback = () => {}, duration = ZOOM_SPEED) {
-    if ((level === 0 || level === 2) && duration > 0) {
-      this.whoosh.play()
+  getCircle(x, y, color) {
+    if (this.preventSpawn) return
+    setTimeout(() => {
+      this.preventSpawn = false
+    }, 750)
+    this.preventSpawn = true
+    const node = this.matter.add
+      .image(x, y, 'ball')
+      .setScale(0.33)
+      .setCircle(14)
+      .setTint(color)
+      .setMass(20)
+      .setCollisionCategory(this.nodeCategory)
+      .setCollidesWith([this.nodeCategory])
+    const cap = this.matter.add
+      .image(x, y, 'ball')
+      .setScale(1.35)
+      .setCircle(65)
+      .setTint(color)
+      .setMass(20)
+      .setCollisionCategory(this.capCategory)
+      .setCollidesWith([this.capCategory])
+    node.cap = cap
+
+    this.matter.add.constraint(node, cap, 0, 1)
+    this.nodes.push(node)
+
+    return node
+  }
+
+  getBlock(x, y, type) {
+    const xMod = y % 2 === (type === 'cup' ? 1 : 0) ? 0 : 0.5
+    let _x = 170 + (x - xMod) * 374
+    let _y = 280 + y * 510 + (type === 'cup' ? -20 : 0)
+
+    if (type === 'hold') {
+      _y -= 8
+      _x -= 3
     }
-    this.cameras.main.zoomTo(
-      ZOOM_LEVELS[level],
-      duration,
-      'Quad.easeInOut',
-      true,
-      (c, p) => {
-        p === 1 && callback()
-      },
-    )
+
+    if (type === 'hold2') {
+      _x += 7
+      _y += 4
+    }
+
+    if (type === 'flip2') {
+      _x -= 2
+      _y -= 36
+    }
+
+    if (type === 'flip') {
+      var block = this.matter.add
+        .sprite(_x, _y, 'thing', 0, {
+          shape: this.shapes.thing,
+        })
+        .setScale(0.75)
+
+      this.matter.add.worldConstraint(block, 0, 1, {
+        angularStiffness: 200,
+        damping: 1,
+        pointA: { x: _x, y: _y - 66 },
+      })
+
+      block.body.position.x = _x
+      block.body.position.y = _y + 25
+      block.body.positionPrev.x = _x
+      block.body.positionPrev.y = _y + 25
+      block
+        .setOrigin(0.5, 0.45)
+        .setFrictionAir(0.3)
+        .setAngle(28)
+        .setCollisionCategory(this.nodeCategory)
+    }
+
+    if (type === 'flip2') {
+      var block = this.matter.add
+        .sprite(_x + 30, _y + 100, 'thing2', 0, {
+          shape: this.shapes.thing2,
+        })
+        .setScale(0.7)
+
+      this.matter.add.worldConstraint(block, 0, 1, {
+        angularStiffness: 200,
+        damping: 1,
+        pointA: { x: _x + 30, y: _y + 100 },
+      })
+
+      block.body.position.x = _x + 35
+      block.body.position.y = _y + 100
+      block.body.positionPrev.x = _x + 35
+      block.body.positionPrev.y = _y + 100
+      block.setFrictionAir(0.3).setCollisionCategory(this.nodeCategory)
+    }
+    return this.matter.add
+      .sprite(_x, _y, type, 0, {
+        shape: this.shapes[type],
+      })
+      .setScale(0.75)
+      .setStatic(true)
+      .setCollisionCategory(this.nodeCategory)
   }
 }
