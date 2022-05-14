@@ -3,19 +3,17 @@ export default class extends Phaser.Scene {
     super({ key: 'Game' })
   }
 
-  init(opts) {
+  init() {
     this.width = this.cameras.main.width
     this.height = this.cameras.main.height
   }
 
   create() {
-    this.behavior = this.plugins.get('BehaviorPlugin')
+    this.nodeCategory = this.matter.world.nextCategory()
+    this.capCategory = this.matter.world.nextCategory()
 
     this.shapes = this.cache.json.get('shapes')
     this.nodes = []
-
-    this.nodeCategory = this.matter.world.nextCategory()
-    this.capCategory = this.matter.world.nextCategory()
 
     this.getBlock(1, 0, 'two')
     this.getBlock(1, 1, 'hold')
@@ -40,8 +38,6 @@ export default class extends Phaser.Scene {
   }
 
   update() {
-    this.behavior.preUpdate()
-    this.behavior.update()
     this.nodes.forEach((node) => {
       if (node.y > 1600) {
         node.cap && node.cap.setSensor(true)

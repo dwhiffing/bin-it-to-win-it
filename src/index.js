@@ -1,24 +1,15 @@
 import Phaser from 'phaser'
 import * as scenes from './scenes'
-import BehaviorPlugin from './behavior'
 
 var config = {
   type: Phaser.AUTO,
   width: 1080,
   height: 1750,
   backgroundColor: '#000',
-  parent: 'phaser-example',
-  plugins: {
-    global: [{ key: 'BehaviorPlugin', plugin: BehaviorPlugin, start: true }],
-  },
+  parent: 'phaser',
   physics: {
     default: 'matter',
-    matter: {
-      // debug: true,
-      gravity: {
-        y: 3,
-      },
-    },
+    matter: { debug: false, gravity: { y: 3 } },
   },
   scale: {
     mode: Phaser.Scale.FIT,
