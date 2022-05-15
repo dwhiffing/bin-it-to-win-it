@@ -4,51 +4,114 @@
 			"image": "sheet.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 2008,
-				"h": 1659
+				"w": 1694,
+				"h": 2043
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "button.png",
+					"filename": "flip.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
-						"w": 366,
-						"h": 100
+						"w": 500,
+						"h": 679
 					},
 					"spriteSourceSize": {
-						"x": 11,
-						"y": 1,
-						"w": 347,
-						"h": 96
+						"x": 0,
+						"y": 0,
+						"w": 500,
+						"h": 679
 					},
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 347,
-						"h": 96
+						"w": 500,
+						"h": 679
 					}
 				},
 				{
-					"filename": "flip-part.png",
+					"filename": "flip2.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
-						"w": 285,
-						"h": 354
+						"w": 500,
+						"h": 679
 					},
 					"spriteSourceSize": {
-						"x": 35,
-						"y": 27,
-						"w": 223,
-						"h": 171
+						"x": 0,
+						"y": 0,
+						"w": 500,
+						"h": 679
 					},
 					"frame": {
-						"x": 350,
+						"x": 1,
+						"y": 682,
+						"w": 500,
+						"h": 679
+					}
+				},
+				{
+					"filename": "hold.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 500,
+						"h": 679
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 500,
+						"h": 679
+					},
+					"frame": {
+						"x": 1,
+						"y": 1363,
+						"w": 500,
+						"h": 679
+					}
+				},
+				{
+					"filename": "hold2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 500,
+						"h": 679
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 500,
+						"h": 679
+					},
+					"frame": {
+						"x": 503,
 						"y": 1,
-						"w": 223,
-						"h": 171
+						"w": 500,
+						"h": 679
+					}
+				},
+				{
+					"filename": "left.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 500,
+						"h": 679
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 500,
+						"h": 679
+					},
+					"frame": {
+						"x": 1005,
+						"y": 1,
+						"w": 500,
+						"h": 679
 					}
 				},
 				{
@@ -66,7 +129,7 @@
 						"h": 186
 					},
 					"frame": {
-						"x": 575,
+						"x": 1507,
 						"y": 1,
 						"w": 186,
 						"h": 186
@@ -87,8 +150,8 @@
 						"h": 186
 					},
 					"frame": {
-						"x": 763,
-						"y": 1,
+						"x": 1507,
+						"y": 189,
 						"w": 186,
 						"h": 186
 					}
@@ -108,8 +171,8 @@
 						"h": 186
 					},
 					"frame": {
-						"x": 951,
-						"y": 1,
+						"x": 1507,
+						"y": 377,
 						"w": 186,
 						"h": 186
 					}
@@ -129,157 +192,10 @@
 						"h": 186
 					},
 					"frame": {
-						"x": 1139,
-						"y": 1,
-						"w": 186,
-						"h": 186
-					}
-				},
-				{
-					"filename": "plastic.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 206,
-						"h": 206
-					},
-					"spriteSourceSize": {
-						"x": 10,
-						"y": 10,
-						"w": 186,
-						"h": 186
-					},
-					"frame": {
-						"x": 1327,
-						"y": 1,
-						"w": 186,
-						"h": 186
-					}
-				},
-				{
-					"filename": "flip2-part.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 400,
-						"h": 400
-					},
-					"spriteSourceSize": {
-						"x": 74,
-						"y": 0,
-						"w": 220,
-						"h": 295
-					},
-					"frame": {
-						"x": 1515,
-						"y": 1,
-						"w": 220,
-						"h": 295
-					}
-				},
-				{
-					"filename": "flip.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 500,
-						"h": 679
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 500,
-						"h": 679
-					},
-					"frame": {
-						"x": 1,
-						"y": 174,
-						"w": 500,
-						"h": 679
-					}
-				},
-				{
-					"filename": "flip2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 500,
-						"h": 679
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 500,
-						"h": 679
-					},
-					"frame": {
-						"x": 503,
-						"y": 189,
-						"w": 500,
-						"h": 679
-					}
-				},
-				{
-					"filename": "hold.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 500,
-						"h": 679
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 500,
-						"h": 679
-					},
-					"frame": {
-						"x": 1005,
-						"y": 189,
-						"w": 500,
-						"h": 679
-					}
-				},
-				{
-					"filename": "hold2.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 500,
-						"h": 679
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 500,
-						"h": 679
-					},
-					"frame": {
 						"x": 1507,
-						"y": 298,
-						"w": 500,
-						"h": 679
-					}
-				},
-				{
-					"filename": "left.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 500,
-						"h": 679
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 500,
-						"h": 679
-					},
-					"frame": {
-						"x": 1,
-						"y": 855,
-						"w": 500,
-						"h": 679
+						"y": 565,
+						"w": 186,
+						"h": 186
 					}
 				},
 				{
@@ -298,7 +214,7 @@
 					},
 					"frame": {
 						"x": 503,
-						"y": 870,
+						"y": 682,
 						"w": 500,
 						"h": 679
 					}
@@ -319,9 +235,30 @@
 					},
 					"frame": {
 						"x": 1005,
-						"y": 870,
+						"y": 682,
 						"w": 500,
 						"h": 679
+					}
+				},
+				{
+					"filename": "plastic.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 206,
+						"h": 206
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 10,
+						"w": 186,
+						"h": 186
+					},
+					"frame": {
+						"x": 1507,
+						"y": 753,
+						"w": 186,
+						"h": 186
 					}
 				},
 				{
@@ -339,10 +276,94 @@
 						"h": 679
 					},
 					"frame": {
-						"x": 1507,
-						"y": 979,
+						"x": 503,
+						"y": 1363,
 						"w": 500,
 						"h": 679
+					}
+				},
+				{
+					"filename": "title.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 651,
+						"h": 399
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 19,
+						"w": 648,
+						"h": 350
+					},
+					"frame": {
+						"x": 1005,
+						"y": 1363,
+						"w": 648,
+						"h": 350
+					}
+				},
+				{
+					"filename": "flip2-part.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 400
+					},
+					"spriteSourceSize": {
+						"x": 74,
+						"y": 0,
+						"w": 220,
+						"h": 295
+					},
+					"frame": {
+						"x": 1005,
+						"y": 1715,
+						"w": 220,
+						"h": 295
+					}
+				},
+				{
+					"filename": "flip-part.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 285,
+						"h": 354
+					},
+					"spriteSourceSize": {
+						"x": 35,
+						"y": 27,
+						"w": 223,
+						"h": 171
+					},
+					"frame": {
+						"x": 1227,
+						"y": 1715,
+						"w": 223,
+						"h": 171
+					}
+				},
+				{
+					"filename": "button.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 366,
+						"h": 100
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 1,
+						"w": 347,
+						"h": 96
+					},
+					"frame": {
+						"x": 1227,
+						"y": 1888,
+						"w": 347,
+						"h": 96
 					}
 				}
 			]
@@ -351,6 +372,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:8167fa8cbda75c71264ecd2fd293a3f2:7874fb8675ef14bfd0c123b064182bc7:9c44ecd7e9a522007eaff2949095bc1d$"
+		"smartupdate": "$TexturePacker:SmartUpdate:56859930c0f6327290f809aaddc9222d:08c3fdd9cd594efb7edd2a4771605f34:9c44ecd7e9a522007eaff2949095bc1d$"
 	}
 }

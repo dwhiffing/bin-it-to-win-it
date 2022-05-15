@@ -26,19 +26,20 @@ export default class extends Phaser.Scene {
           this.startLevel()
         }
       } else if (e.key === 'x') {
-        if (this.registry.values.levelIndex < LEVELS.length - 1) {
-          this.registry.values.levelIndex++
-          this.startLevel()
-        }
+        this.won()
       }
     })
 
-    this.input.on('pointerup', (p) => {
+    this.input.on('pointerdown', (p) => {
       this.trashService.putTrash(p.x)
     })
 
     this.scene.launch('Hud')
     this.startLevel()
+  }
+
+  selectTrash(i) {
+    this.registry.set('queueIndex', i)
   }
 
   startLevel() {
@@ -51,7 +52,7 @@ export default class extends Phaser.Scene {
     this.trashService.init()
     this.trashService.addTrashToQueue()
     this.time.addEvent({
-      delay: 1000,
+      delay: 2500,
       repeat: -1,
       callback: () => {
         if (
@@ -60,8 +61,7 @@ export default class extends Phaser.Scene {
           this.registry.values.queue.length === 0 &&
           this.trashService.trash.length === 0
         ) {
-          this.registry.values.levelIndex++
-          this.startLevel()
+          this.won()
         } else {
           this.trashService.addTrashToQueue()
         }
@@ -88,6 +88,16 @@ export default class extends Phaser.Scene {
 
   gameover() {
     this.restart()
+  }
+
+  won() {
+    if (this.registry.values.levelIndex < LEVELS.length - 1) {
+      this.registry.values.levelIndex++
+      this.startLevel()
+    } else {
+      this.scene.stop('Hud')
+      this.scene.start('Win')
+    }
   }
 
   update() {

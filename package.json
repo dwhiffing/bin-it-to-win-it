@@ -1,17 +1,17 @@
 {
-  "name": "pendulum-climber",
+  "name": "bin-it-to-win-it",
   "version": "0.0.1",
-  "description": "A game",
+  "description": "TOJam 2022",
   "main": "src/index.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js; cp -r assets dist/; cp favicon.png dist/; cp manifest.json dist/",
     "start": "webpack-dev-server --config webpack.base.js --open",
     "deploy": "gh-pages -d dist"
   },
-  "author": "Daniel Whiffing <danielwhiffing@gmail.com> (http://www.infinite-ramble.com)",
+  "author": "Daniel Whiffing <danielwhiffing@gmail.com> (http://directive.software)",
   "license": "MIT",
   "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
-  "homepage": "https://github.com/dwhiffing/pendulum-climber",
+  "homepage": "https://github.com/dwhiffing/sorting",
   "devDependencies": {
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",

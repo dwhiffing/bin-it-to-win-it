@@ -9,10 +9,22 @@ export default class HudService {
     this.bg.fillStyle(0x222222, 1)
     this.bg.fillRect(0, 0, this.scene.cameras.main.width, 300)
 
+    this.border = this.scene.add.circle(200, 150, 135)
+    this.border.setStrokeStyle(20, 0xffffff)
+    this.border.depth = 9999
+
     this.createQueue()
     this.updateQueueUI()
     this.scene.registry.events.on('changedata-queue', () => {
       this.updateQueueUI()
+    })
+    this.scene.registry.events.on('changedata-queueIndex', () => {
+      const i = this.scene.registry.values.queueIndex
+      if (i === -1) {
+        this.border.x = -9999
+      } else {
+        this.border.x = 200 + i * 300
+      }
     })
   }
 
@@ -25,6 +37,10 @@ export default class HudService {
         .image(200 + i * 300, 150, 'sprites', 'metal.png')
         .setAlpha(0)
         .setScale(1.3)
+        .setInteractive()
+        .on('pointerdown', () => {
+          this.scene.scene.get('Game').selectTrash(i)
+        })
       this.uiGroup.add(sprite)
     }
   }

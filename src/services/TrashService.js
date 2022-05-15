@@ -11,6 +11,7 @@ export default class TrashService {
     this.category = scene.matter.world.nextCategory()
     this.putTrash = this.putTrash.bind(this)
     this.graphics = this.scene.add.graphics()
+
     this.addTrashToQueue = this.addTrashToQueue.bind(this)
     this.graphics.depth = 999
   }
@@ -18,6 +19,7 @@ export default class TrashService {
   init() {
     this.trash = []
     this.pileIndex = 0
+    this.scene.registry.values.queueIndex = 0
     this.pile = this.scene.registry.values.level.pile
     this.bins = this.scene.registry.values.level.bins
     this.createBottomSections()
@@ -56,7 +58,6 @@ export default class TrashService {
   addTrashToQueue() {
     const queue = this.scene.registry.get('queue')
     if (queue.length === 10) {
-      // this.scene.gameover()
       return
     }
     const color = this.pile[this.pileIndex++]
@@ -69,9 +70,14 @@ export default class TrashService {
     const queue = this.scene.registry.get('queue')
     if (queue.length === 0) return
     let x = clamp(_x, this.width / 2 - 200, this.width / 2 + 200)
+    const i = this.scene.registry.values.queueIndex
+    const { color } = queue[i]
+    this.scene.registry.set('queue', [
+      ...queue.slice(0, i),
+      ...queue.slice(i + 1),
+    ])
 
-    const { color } = queue[0]
-    this.scene.registry.set('queue', queue.slice(1))
+    this.scene.registry.values.queueIndex = queue.length === 0 ? -1 : 0
     this.create(x, -30, color)
   }
 

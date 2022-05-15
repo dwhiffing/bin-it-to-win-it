@@ -35,14 +35,16 @@ export default class BlockService {
     let _x = xOffset + (x - xMod) * xTileSize
     let _y = yOffset + y * yTileSize
 
-    console.log(invert)
     if (type === 'flip') {
       let part = this.createPart('flip-part', _x, _y)
-      part.setOrigin(0.5, 0.45).setAngle(invert ? -15 : 25)
+      part.setOrigin(0.5, 0.45).setAngle(invert ? -25 : 25)
     }
 
     if (type === 'flip2') {
-      this.createPart('flip2-part', _x, _y)
+      this.createPart('flip2-part', invert ? _x - 100 : _x, _y).setScale(
+        invert ? -1 : 1,
+        1,
+      )
     }
 
     const sprite = this.scene.matter.add
@@ -55,7 +57,11 @@ export default class BlockService {
       sprite.setScale(-1, 1)
       _x += xTileSize
     }
-    const { x: oX, y: oY } = sprite.body.bounds.min
+    let { x: oX, y: oY } = sprite.body.bounds.min
+    if (type === 'hold2' && invert) {
+      oX -= 20
+    }
+
     setBodyOffset(sprite.body, invert ? -oX : oX, oY)
     sprite.setPosition(_x, _y)
 
@@ -87,8 +93,8 @@ const setBodyOffset = (body, offsetX, offsetY) => {
 }
 
 const PART_OFFSETS = {
-  'flip-part': { offsetX: 255, offsetY: 240, originX: 0, originY: 25 },
-  'flip2-part': { offsetX: 310, offsetY: 450, originX: 5, originY: 25 },
+  'flip-part': { offsetX: 250, offsetY: 240, originX: 0, originY: 25 },
+  'flip2-part': { offsetX: 310, offsetY: 450, originX: 10, originY: 25 },
 }
 
 const xTileSize = 500
