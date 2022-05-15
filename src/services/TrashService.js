@@ -6,26 +6,46 @@ export default class TrashService {
     this.scene = scene
     this.width = scene.width
     this.height = scene.height
-    this.trash = []
-    this.pileIndex = 0
-    this.pile = scene.registry.values.level.pile
-    this.bins = scene.registry.values.level.bins
-    this.createBottomSections()
+    this.init = this.init.bind(this)
+
     this.category = scene.matter.world.nextCategory()
     this.putTrash = this.putTrash.bind(this)
+    this.graphics = this.scene.add.graphics()
     this.addTrashToQueue = this.addTrashToQueue.bind(this)
+    this.graphics.depth = 999
+  }
+
+  init() {
+    this.trash = []
+    this.pileIndex = 0
+    this.pile = this.scene.registry.values.level.pile
+    this.bins = this.scene.registry.values.level.bins
+    this.createBottomSections()
+  }
+
+  clean() {
+    if (!this.trash) return
+    this.trash.forEach((child) => {
+      if (!child || !child.body) return
+      child.setPosition(-1000, -1000)
+      child.setActive(false)
+      child.destroy()
+    })
   }
 
   update() {
+    if (!this.trash) return
     this.trash = this.trash.filter((child) => {
+      if (!child || !child.body) return
       if (child.y > this.scene.registry.values.blockHeight + 50) {
         // check x of child to see if it went in the right pile
         const index = this.scene.registry.values.level.bins.indexOf(child.color)
         const size = this.width / this.scene.registry.values.level.bins.length
         const minX = size * index
         const maxX = size * (index + 1)
-        const pointChange = child.x >= minX && child.x <= maxX ? 1 : -1
-        this.scene.registry.values.points += pointChange
+        if (!(child.x >= minX && child.x <= maxX)) {
+          this.scene.gameover()
+        }
         child.setAlpha(0).setActive(false)
         return false
       }
@@ -36,7 +56,7 @@ export default class TrashService {
   addTrashToQueue() {
     const queue = this.scene.registry.get('queue')
     if (queue.length === 10) {
-      this.scene.gameover()
+      // this.scene.gameover()
       return
     }
     const color = this.pile[this.pileIndex++]
@@ -47,11 +67,8 @@ export default class TrashService {
 
   putTrash(_x) {
     const queue = this.scene.registry.get('queue')
-    if (this.preventSpawn || queue.length === 0) return
+    if (queue.length === 0) return
     let x = clamp(_x, this.width / 2 - 200, this.width / 2 + 200)
-
-    setTimeout(() => (this.preventSpawn = false), 750)
-    this.preventSpawn = true
 
     const { color } = queue[0]
     this.scene.registry.set('queue', queue.slice(1))
@@ -59,14 +76,14 @@ export default class TrashService {
   }
 
   createBottomSections() {
+    this.graphics.clear()
     for (let i = 0; i < this.bins.length; i++) {
       const color = this.bins[i]
-      const graphics = this.scene.add.graphics()
-      graphics.fillStyle(color, 1.0)
+      this.graphics.fillStyle(color, 1.0)
       const { width } = this.scene.cameras.main
       const yPos = this.scene.registry.values.blockHeight
       const chunkSize = width / this.bins.length
-      graphics.fillRect(chunkSize * i, yPos, chunkSize, 500)
+      this.graphics.fillRect(chunkSize * i, yPos, chunkSize, 500)
     }
   }
 

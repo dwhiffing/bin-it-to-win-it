@@ -13,10 +13,10 @@ export default class extends Phaser.Scene {
       progress.fillRect(0, height / 2, width * value, 60)
     })
 
-    this.load.script(
-      'webfont',
-      'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js',
-    )
+    // this.load.script(
+    //   'webfont',
+    //   'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js',
+    // )
 
     this.load.json('shapes', 'assets/sheet/tiles.json')
     this.load.atlas(
@@ -44,13 +44,13 @@ export default class extends Phaser.Scene {
     // this.load.image('flip2-part', 'assets/images/flip2-part.png')
 
     this.load.on('complete', () => {
-      WebFont.load({
-        custom: { families: ['AnotherHand'] },
-        active: () => {
-          progress.destroy()
-          this.scene.start(true ? 'Game' : 'Menu')
-        },
-      })
+      // WebFont.load({
+      //   custom: { families: ['AnotherHand'] },
+      //   active: () => {
+      progress.destroy()
+      this.scene.start(true ? 'Game' : 'Menu')
+      // },
+      // })
     })
   }
 }

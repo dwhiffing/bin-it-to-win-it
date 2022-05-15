@@ -5,19 +5,30 @@ export default class BlockService {
     this.scene = scene
     this.category = scene.matter.world.nextCategory()
     this.shapes = scene.cache.json.get('shapes')
+    this.init = this.init.bind(this)
+  }
+
+  update() {}
+
+  init() {
     this.children = []
-    const level = scene.registry.values.level
-    if (!level) debugger
+    const level = this.scene.registry.values.level
     level.blocks.forEach((block) => this.getBlock(...block))
     this.height = 0
     const lastBlock = level.blocks[level.blocks.length - 1]
-    scene.registry.set(
+    this.scene.registry.set(
       'blockHeight',
       yOffset + (lastBlock[1] + 1) * yTileSize + 200,
     )
   }
 
-  update() {}
+  clean() {
+    if (this.children)
+      this.children.forEach((child) => {
+        child.body && child.body.destroy()
+        child && child.destroy()
+      })
+  }
 
   getBlock(x, y, type) {
     const xMod = y % 2 === 0 ? 0 : 0.5
@@ -55,6 +66,8 @@ export default class BlockService {
     })
 
     setBodyOffset(part.body, x + originX, y + originY)
+    this.children.push(part)
+
     return part.setFrictionAir(0.3).setCollisionCategory(this.category)
   }
 }
