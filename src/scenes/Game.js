@@ -34,7 +34,7 @@ export default class extends Phaser.Scene {
       this.trashService.putTrash(p.x)
     })
 
-    this.scene.launch('Hud')
+    this.scene.launch('Hud', { restart: this.restart.bind(this) })
     this.startLevel()
   }
 

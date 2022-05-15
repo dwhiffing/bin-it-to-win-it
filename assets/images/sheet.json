@@ -262,6 +262,27 @@
 					}
 				},
 				{
+					"filename": "restart.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 3,
+						"w": 61,
+						"h": 58
+					},
+					"frame": {
+						"x": 1507,
+						"y": 941,
+						"w": 61,
+						"h": 58
+					}
+				},
+				{
 					"filename": "two.png",
 					"rotated": false,
 					"trimmed": false,
@@ -372,6 +393,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:56859930c0f6327290f809aaddc9222d:08c3fdd9cd594efb7edd2a4771605f34:9c44ecd7e9a522007eaff2949095bc1d$"
+		"smartupdate": "$TexturePacker:SmartUpdate:307b4227d18df0d306cb743eda35f02b:c3bfff12709532a6d62e629e27d5e3f6:9c44ecd7e9a522007eaff2949095bc1d$"
 	}
 }

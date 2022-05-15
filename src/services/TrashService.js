@@ -76,8 +76,7 @@ export default class TrashService {
       ...queue.slice(0, i),
       ...queue.slice(i + 1),
     ])
-
-    this.scene.registry.values.queueIndex = queue.length === 0 ? -1 : 0
+    this.scene.registry.values.queueIndex = 0
     this.create(x, -30, color)
   }
 

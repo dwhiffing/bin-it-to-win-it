@@ -1,13 +1,19 @@
 import { KEYS } from '../constants'
 
 export default class HudService {
-  constructor(scene) {
+  constructor(scene, restart) {
     this.scene = scene
     this.width = scene.width
     this.height = scene.height
     this.bg = this.scene.add.graphics()
     this.bg.fillStyle(0x222222, 1)
     this.bg.fillRect(0, 0, this.scene.cameras.main.width, 300)
+
+    this.scene.add
+      .image(this.scene.cameras.main.width - 100, 150, 'sprites', 'restart.png')
+      .setScale(2)
+      .setInteractive()
+      .on('pointerdown', restart)
 
     this.border = this.scene.add.circle(200, 150, 135)
     this.border.setStrokeStyle(20, 0xffffff)
