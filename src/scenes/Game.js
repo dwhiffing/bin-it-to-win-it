@@ -14,19 +14,23 @@ export default class extends Phaser.Scene {
 
   create() {
     this.levelIndex = 0
-    const level = LEVELS[this.levelIndex]
-    this.blocks = new BlockService(this, level.blocks)
-    this.trash = new TrashService(this)
+    this.level = LEVELS[this.levelIndex]
+    this.points = 0
+    this.pointText = this.add.text(40, 30, '0', { fontSize: 150 })
+    this.blocks = new BlockService(this)
+    this.trashService = new TrashService(this)
+    this.trashService.addTrashToQueue()
     this.time.addEvent({
-      delay: 1000,
+      delay: 3000,
       repeat: -1,
-      callback: () => {
-        this.trash.add(Phaser.Math.RND.pick(level.colors))
-      },
+      callback: this.trashService.addTrashToQueue,
     })
-    this.input.keyboard.addKey('Z').on('down', this.trash.putLeft)
-    this.input.keyboard.addKey('X').on('down', this.trash.putRight)
+    this.input.on('pointerdown', (pointer) => {
+      this.trashService.putTrash(pointer.downX)
+    })
   }
 
-  update() {}
+  update() {
+    this.trashService.update()
+  }
 }

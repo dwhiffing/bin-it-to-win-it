@@ -1,11 +1,11 @@
 import { LEVELS } from '../constants/levels'
 
 export default class BlockService {
-  constructor(scene, blocks) {
+  constructor(scene) {
     this.scene = scene
     this.category = scene.matter.world.nextCategory()
     this.shapes = scene.cache.json.get('shapes')
-    blocks.forEach((block) => this.getBlock(...block))
+    scene.level.blocks.forEach((block) => this.getBlock(...block))
   }
 
   update() {}

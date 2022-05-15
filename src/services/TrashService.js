@@ -1,43 +1,71 @@
 export default class TrashService {
   constructor(scene) {
     this.scene = scene
-    this.children = []
+    this.width = scene.width
+    this.height = scene.height
+    this.trash = []
+    this.pileIndex = 0
+    this.pile = scene.level.pile
+    this.bins = scene.level.bins
     this.createQueue()
+    this.createBottomSections()
     this.category = scene.matter.world.nextCategory()
-    this.putLeft = this.putLeft.bind(this)
-    this.add = this.add.bind(this)
-    this.putRight = this.putRight.bind(this)
+    this.putTrash = this.putTrash.bind(this)
+    this.addTrashToQueue = this.addTrashToQueue.bind(this)
   }
 
-  update() {}
+  update() {
+    this.trash = this.trash.filter((child) => {
+      if (child.y > this.height) {
+        // check x of child to see if it went in the right pile
+        const index = this.scene.level.bins.indexOf(child.color)
+        const size = this.height / this.scene.level.bins.length
+        const minX = size * index
+        const maxX = size * (index + 1)
+        const pointChange = child.x >= minX && child.x <= maxX ? 1 : -1
+        this.scene.points += pointChange
+        this.scene.pointText.text = this.scene.points.toString()
+        child.setAlpha(0).setActive(false)
+        return false
+      }
+      return true
+    })
+  }
+
+  createBottomSections() {
+    this.queue = []
+    for (let i = 0; i < this.bins.length; i++) {
+      const color = this.bins[i]
+      const graphics = this.scene.add.graphics()
+      graphics.fillStyle(color, 1.0)
+      const { width, height } = this.scene.cameras.main
+      const chunkSize = width / this.bins.length
+      graphics.fillRect(chunkSize * i, height - 200, chunkSize, 200)
+    }
+  }
 
   createQueue() {
     this.queue = []
     this.uiGroup = this.scene.add.group()
     for (let i = 0; i < 10; i++) {
       const sprite = this.scene.add
-        .image(240 + i * 170, 100, 'ball')
+        .image(500 + i * 120, 100, 'ball')
         .setAlpha(0)
       this.uiGroup.add(sprite)
     }
   }
 
-  add(color) {
+  addTrashToQueue() {
     if (this.queue.length === 10) {
       // TODO: game over
       this.scene.scene.start('Menu')
       return
     }
-    this.queue.push({ color })
-    this.updateQueueUI()
-  }
-
-  putLeft() {
-    this.put(-100)
-  }
-
-  putRight() {
-    this.put(100)
+    const color = this.pile[this.pileIndex++]
+    if (color) {
+      this.queue.push({ color })
+      this.updateQueueUI()
+    }
   }
 
   updateQueueUI() {
@@ -49,14 +77,14 @@ export default class TrashService {
     })
   }
 
-  put(x) {
+  putTrash(x) {
     if (this.preventSpawn || this.queue.length === 0) return
 
     setTimeout(() => (this.preventSpawn = false), 750)
     this.preventSpawn = true
 
     const { color } = this.queue.shift()
-    this.create(this.scene.width / 2 + x, -30, color)
+    this.create(x, -30, color)
     this.updateQueueUI()
   }
 
@@ -75,9 +103,12 @@ export default class TrashService {
       .setCollidesWith([this.category])
 
     const sprites = [node, cap]
-    sprites.forEach((i) => i.setTint(color).setMass(20))
+    sprites.forEach((i) => {
+      i.color = color
+      i.setTint(color).setMass(20)
+    })
     this.scene.matter.add.constraint(node, cap, 0, 1)
-    this.children.push(node)
+    this.trash.push(node)
     return node
   }
 }
