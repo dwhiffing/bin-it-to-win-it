@@ -1,20 +1,26 @@
 export const STARTING_LEVEL = 2
 export const LEVELS = [
   {
-    pile: [0x0000ff, 0xff0000, 0x0000ff, 0xff0000],
+    pile: [0x0000ff, 0xff0000],
     bins: [0x0000ff, 0xff0000],
     blocks: [[1, 0, 'two']],
   },
   {
-    pile: [
-      0x0000ff, 0xff0000, 0x0000ff, 0xff0000, 0x0000ff, 0xff0000, 0x0000ff,
-      0xff0000, 0x0000ff, 0xff0000,
-    ],
+    pile: [0x0000ff, 0x0000ff, 0xff0000, 0xff0000],
     bins: [0x0000ff, 0xff0000],
     blocks: [
       [1, 0, 'two'],
       [1, 1, 'hold'],
-      [2, 1, 'flip'],
+      [2, 1, 'hold'],
+    ],
+  },
+  {
+    pile: [0x0000ff, 0x0000ff, 0xff0000, 0xff0000],
+    bins: [0x0000ff, 0xff0000],
+    blocks: [
+      [1, 0, 'two'],
+      [1, 1, 'hold'],
+      [2, 1, 'flip', -1],
     ],
   },
   {

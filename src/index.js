@@ -10,7 +10,7 @@ var config = {
   scene: Object.values(scenes),
   physics: {
     default: 'matter',
-    matter: { debug: false, gravity: { y: 2 } },
+    matter: { debug: true, gravity: { y: 2 } },
   },
   scale: {
     mode: Phaser.Scale.FIT,

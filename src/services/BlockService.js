@@ -30,14 +30,15 @@ export default class BlockService {
       })
   }
 
-  getBlock(x, y, type) {
+  getBlock(x, y, type, invert) {
     const xMod = y % 2 === 0 ? 0 : 0.5
     let _x = xOffset + (x - xMod) * xTileSize
     let _y = yOffset + y * yTileSize
 
+    console.log(invert)
     if (type === 'flip') {
       let part = this.createPart('flip-part', _x, _y)
-      part.setOrigin(0.5, 0.45).setAngle(28)
+      part.setOrigin(0.5, 0.45).setAngle(invert ? -15 : 25)
     }
 
     if (type === 'flip2') {
@@ -45,13 +46,19 @@ export default class BlockService {
     }
 
     const sprite = this.scene.matter.add
-      .sprite(_x, _y, 'sprites', type + '.png', { shape: this.shapes[type] })
+      .sprite(0, 0, 'sprites', type + '.png', { shape: this.shapes[type] })
       .setOrigin(0)
       .setCollisionCategory(this.category)
       .setFriction(1)
+
+    if (invert) {
+      sprite.setScale(-1, 1)
+      _x += xTileSize
+    }
     const { x: oX, y: oY } = sprite.body.bounds.min
-    setBodyOffset(sprite.body, oX, oY)
+    setBodyOffset(sprite.body, invert ? -oX : oX, oY)
     sprite.setPosition(_x, _y)
+
     this.children.push(sprite)
   }
 
@@ -80,7 +87,7 @@ const setBodyOffset = (body, offsetX, offsetY) => {
 }
 
 const PART_OFFSETS = {
-  'flip-part': { offsetX: 250, offsetY: 240, originX: 0, originY: 25 },
+  'flip-part': { offsetX: 255, offsetY: 240, originX: 0, originY: 25 },
   'flip2-part': { offsetX: 310, offsetY: 450, originX: 5, originY: 25 },
 }
 
