@@ -1,3 +1,13 @@
+import { clamp } from 'lodash'
+
+const KEYS = {
+  0xff0000: 'plastic',
+  0x00ff00: 'glass',
+  0x0000ff: 'paper',
+  0xffff00: 'metal',
+  0xff00ff: 'garbage',
+}
+
 export default class TrashService {
   constructor(scene) {
     this.scene = scene
@@ -49,7 +59,7 @@ export default class TrashService {
     this.uiGroup = this.scene.add.group()
     for (let i = 0; i < 10; i++) {
       const sprite = this.scene.add
-        .image(500 + i * 120, 100, 'ball')
+        .image(500 + i * 180, 100, 'sprites', 'metal.png')
         .setAlpha(0)
       this.uiGroup.add(sprite)
     }
@@ -72,13 +82,14 @@ export default class TrashService {
     this.uiGroup.children.entries.forEach((c) => c.setAlpha(0))
     this.queue.forEach((o, i) => {
       const sprite = this.uiGroup.children.entries[i]
-      sprite.setTint(o.color)
+      sprite.setFrame(KEYS[o.color] + '.png')
       sprite.setAlpha(1)
     })
   }
 
-  putTrash(x) {
+  putTrash(_x) {
     if (this.preventSpawn || this.queue.length === 0) return
+    let x = clamp(_x, this.width / 2 - 200, this.width / 2 + 200)
 
     setTimeout(() => (this.preventSpawn = false), 750)
     this.preventSpawn = true
@@ -90,14 +101,14 @@ export default class TrashService {
 
   create(x, y, color) {
     const node = this.scene.matter.add
-      .image(x, y, 'ball')
-      .setScale(0.5)
-      .setCircle(19)
+      .image(x, y, 'sprites', KEYS[color] + '.png')
+      .setScale(1)
+      .setCircle(17)
       .setCollisionCategory(this.scene.blocks.category)
       .setCollidesWith([this.scene.blocks.category])
     const cap = this.scene.matter.add
-      .image(x, y, 'ball')
-      .setScale(1.8)
+      .image(x, y, 'sprites', KEYS[color] + '.png')
+      .setAlpha(0)
       .setCircle(85)
       .setCollisionCategory(this.category)
       .setCollidesWith([this.category])
@@ -105,7 +116,7 @@ export default class TrashService {
     const sprites = [node, cap]
     sprites.forEach((i) => {
       i.color = color
-      i.setTint(color).setMass(20)
+      i.setMass(20)
     })
     this.scene.matter.add.constraint(node, cap, 0, 1)
     this.trash.push(node)

@@ -25,9 +25,10 @@ export default class BlockService {
     }
 
     const sprite = this.scene.matter.add
-      .sprite(_x, _y, type, 0, { shape: this.shapes[type] })
+      .sprite(_x, _y, 'sprites', type + '.png', { shape: this.shapes[type] })
       .setOrigin(0)
       .setCollisionCategory(this.category)
+      .setFriction(1)
     const { x: oX, y: oY } = sprite.body.bounds.min
     setBodyOffset(sprite.body, oX, oY)
     sprite.setPosition(_x, _y)
@@ -36,7 +37,9 @@ export default class BlockService {
   createPart(key, x, y) {
     const { offsetX, offsetY, originX, originY } = PART_OFFSETS[key]
     const shape = this.shapes[key]
-    let part = this.scene.matter.add.sprite(x, y, key, 0, { shape })
+    let part = this.scene.matter.add.sprite(x, y, 'sprites', key + '.png', {
+      shape,
+    })
     this.scene.matter.add.worldConstraint(part, 0, 1, {
       pointA: { x: x + offsetX, y: y + offsetY },
     })

@@ -17,6 +17,7 @@ export default class extends Phaser.Scene {
     this.level = LEVELS[this.levelIndex]
     this.points = 0
     this.pointText = this.add.text(40, 30, '0', { fontSize: 150 })
+    // this.cameras.main.zoom = 1.2
     this.blocks = new BlockService(this)
     this.trashService = new TrashService(this)
     this.trashService.addTrashToQueue()
