@@ -10,7 +10,7 @@ export default class extends Phaser.Scene {
 
   create() {
     this.add
-      .image(this.width / 2, this.height - 600, 'playButton')
+      .image(this.width / 2, this.height - 600, 'sprites', 'playButton.png')
       .setInteractive()
       .on('pointerdown', () => this.scene.start('Game'))
   }

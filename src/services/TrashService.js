@@ -1,12 +1,5 @@
 import { clamp } from 'lodash'
-
-const KEYS = {
-  0xff0000: 'plastic',
-  0x00ff00: 'glass',
-  0x0000ff: 'paper',
-  0xffff00: 'metal',
-  0xff00ff: 'garbage',
-}
+import { KEYS } from '../constants'
 
 export default class TrashService {
   constructor(scene) {
@@ -15,9 +8,8 @@ export default class TrashService {
     this.height = scene.height
     this.trash = []
     this.pileIndex = 0
-    this.pile = scene.level.pile
-    this.bins = scene.level.bins
-    this.createQueue()
+    this.pile = scene.registry.values.level.pile
+    this.bins = scene.registry.values.level.bins
     this.createBottomSections()
     this.category = scene.matter.world.nextCategory()
     this.putTrash = this.putTrash.bind(this)
@@ -26,15 +18,14 @@ export default class TrashService {
 
   update() {
     this.trash = this.trash.filter((child) => {
-      if (child.y > this.height) {
+      if (child.y > this.scene.registry.values.blockHeight + 50) {
         // check x of child to see if it went in the right pile
-        const index = this.scene.level.bins.indexOf(child.color)
-        const size = this.height / this.scene.level.bins.length
+        const index = this.scene.registry.values.level.bins.indexOf(child.color)
+        const size = this.width / this.scene.registry.values.level.bins.length
         const minX = size * index
         const maxX = size * (index + 1)
         const pointChange = child.x >= minX && child.x <= maxX ? 1 : -1
-        this.scene.points += pointChange
-        this.scene.pointText.text = this.scene.points.toString()
+        this.scene.registry.values.points += pointChange
         child.setAlpha(0).setActive(false)
         return false
       }
@@ -42,61 +33,41 @@ export default class TrashService {
     })
   }
 
-  createBottomSections() {
-    this.queue = []
-    for (let i = 0; i < this.bins.length; i++) {
-      const color = this.bins[i]
-      const graphics = this.scene.add.graphics()
-      graphics.fillStyle(color, 1.0)
-      const { width, height } = this.scene.cameras.main
-      const chunkSize = width / this.bins.length
-      graphics.fillRect(chunkSize * i, height - 200, chunkSize, 200)
-    }
-  }
-
-  createQueue() {
-    this.queue = []
-    this.uiGroup = this.scene.add.group()
-    for (let i = 0; i < 10; i++) {
-      const sprite = this.scene.add
-        .image(500 + i * 180, 100, 'sprites', 'metal.png')
-        .setAlpha(0)
-      this.uiGroup.add(sprite)
-    }
-  }
-
   addTrashToQueue() {
-    if (this.queue.length === 10) {
-      // TODO: game over
-      this.scene.scene.start('Menu')
+    const queue = this.scene.registry.get('queue')
+    if (queue.length === 10) {
+      this.scene.gameover()
       return
     }
     const color = this.pile[this.pileIndex++]
     if (color) {
-      this.queue.push({ color })
-      this.updateQueueUI()
+      this.scene.registry.set('queue', [...queue, { color }])
     }
   }
 
-  updateQueueUI() {
-    this.uiGroup.children.entries.forEach((c) => c.setAlpha(0))
-    this.queue.forEach((o, i) => {
-      const sprite = this.uiGroup.children.entries[i]
-      sprite.setFrame(KEYS[o.color] + '.png')
-      sprite.setAlpha(1)
-    })
-  }
-
   putTrash(_x) {
-    if (this.preventSpawn || this.queue.length === 0) return
+    const queue = this.scene.registry.get('queue')
+    if (this.preventSpawn || queue.length === 0) return
     let x = clamp(_x, this.width / 2 - 200, this.width / 2 + 200)
 
     setTimeout(() => (this.preventSpawn = false), 750)
     this.preventSpawn = true
 
-    const { color } = this.queue.shift()
+    const { color } = queue[0]
+    this.scene.registry.set('queue', queue.slice(1))
     this.create(x, -30, color)
-    this.updateQueueUI()
+  }
+
+  createBottomSections() {
+    for (let i = 0; i < this.bins.length; i++) {
+      const color = this.bins[i]
+      const graphics = this.scene.add.graphics()
+      graphics.fillStyle(color, 1.0)
+      const { width } = this.scene.cameras.main
+      const yPos = this.scene.registry.values.blockHeight
+      const chunkSize = width / this.bins.length
+      graphics.fillRect(chunkSize * i, yPos, chunkSize, 500)
+    }
   }
 
   create(x, y, color) {

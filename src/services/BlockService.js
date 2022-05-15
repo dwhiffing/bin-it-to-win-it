@@ -5,7 +5,16 @@ export default class BlockService {
     this.scene = scene
     this.category = scene.matter.world.nextCategory()
     this.shapes = scene.cache.json.get('shapes')
-    scene.level.blocks.forEach((block) => this.getBlock(...block))
+    this.children = []
+    const level = scene.registry.values.level
+    if (!level) debugger
+    level.blocks.forEach((block) => this.getBlock(...block))
+    this.height = 0
+    const lastBlock = level.blocks[level.blocks.length - 1]
+    scene.registry.set(
+      'blockHeight',
+      yOffset + (lastBlock[1] + 1) * yTileSize + 200,
+    )
   }
 
   update() {}
@@ -32,6 +41,7 @@ export default class BlockService {
     const { x: oX, y: oY } = sprite.body.bounds.min
     setBodyOffset(sprite.body, oX, oY)
     sprite.setPosition(_x, _y)
+    this.children.push(sprite)
   }
 
   createPart(key, x, y) {
@@ -64,4 +74,4 @@ const PART_OFFSETS = {
 const xTileSize = 500
 const yTileSize = 679
 const xOffset = 330
-const yOffset = 330
+const yOffset = 500
