@@ -94,7 +94,7 @@ const setBodyOffset = (body, offsetX, offsetY) => {
 
 const PART_OFFSETS = {
   'flip-part': { offsetX: 250, offsetY: 240, originX: 0, originY: 25 },
-  'flip2-part': { offsetX: 310, offsetY: 450, originX: 10, originY: 25 },
+  'flip2-part': { offsetX: 310, offsetY: 450, originX: 12, originY: 25 },
 }
 
 const xTileSize = 500

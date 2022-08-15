@@ -52,7 +52,7 @@ export default class extends Phaser.Scene {
     this.trashService.init()
     this.trashService.addTrashToQueue()
     this.time.addEvent({
-      delay: 2500,
+      delay: 800,
       repeat: -1,
       callback: () => {
         if (

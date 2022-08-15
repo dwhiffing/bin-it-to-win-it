@@ -45,8 +45,9 @@ export default class TrashService {
         const size = this.width / this.scene.registry.values.level.bins.length
         const minX = size * index
         const maxX = size * (index + 1)
-        if (!(child.x >= minX && child.x <= maxX)) {
-          this.scene.gameover()
+        const x = clamp(child.x, 0, 2160)
+        if (!(x >= minX && x <= maxX)) {
+          // this.scene.gameover()
         }
         child.setAlpha(0).setActive(false)
         return false
